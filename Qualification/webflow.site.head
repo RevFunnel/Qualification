@@ -1,0 +1,224 @@
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.css">
+
+<style type="text/css">
+  
+.email-link {
+    color: #ff9600;
+} 
+  
+.alink {
+    color: #ff9600;    
+	text-decoration: none;
+}  
+  
+.change-ans {
+    cursor: pointer; 
+	display:inline-block;
+}
+    
+.comment-img {
+    float: left;
+    width: 38px;
+}
+  
+.art-list {
+    background-color: #fff;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    float: left;
+}
+.wall-f {
+    padding: 0 !important;
+}
+.art-list figure figcaption {
+    box-sizing: border-box;
+    float: left;
+    padding: 0;
+    width: 100%;
+}
+  
+#recommend-list .white-panel.art-list {
+    background-color: #f8f8fa;border-radius: 8px;padding: 14px;
+  	/*box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);*/
+}  
+  
+.art-list figure a img {
+    width: 100%;border-radius: 5px;
+}
+.art-list figure figcaption h4 {
+    color: #676a71;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 12px;
+}
+.art-list figure figcaption h4 a {
+    color: #676a71;
+    text-decoration: none;
+}
+.art-list figure figcaption h4 a:hover {
+    color: #ff9600;
+}
+.art-list .villa-name {
+ 	text-decoration: underline;
+  	color: #0000EE;
+ }
+.user-list {
+    background: rgba(42, 38, 43, 0.2) none repeat scroll 0 0;
+    border: 1px solid #e1e1e5;
+    border-radius: 8px;
+    box-sizing: border-box;
+    float: left;
+    padding: 12px;
+    width: 100%; margin-bottom: 10px;
+    /*box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);*/
+}
+.user-list-pic {
+    width: auto;min-width: 40px;text-align: center;float:left;
+}
+  
+  
+ .user-list-pic .staff-name {
+    display: block;
+    font-size: 14px;
+    text-align: center;color: #7d7e81;
+}
+  
+  .user-list-pic > img {
+    max-width: 40px;
+}
+.user-list-text {
+    color: #000000;
+    float: left;
+    font-size: 15px;
+    line-height: 20px;
+    margin-left: 15px;
+    width: 77%;
+}  
+  
+.user-list-text a {		
+  	color: #000000;
+  }
+  
+.new-banner-right .lp2-select{
+  appearance:none;
+  -moz-appearance:none; 
+  -webkit-appearance:none;   
+}
+  
+.lp2-submit-btn {
+    cursor: pointer;
+}  
+  
+select.input-error {
+    border: 1px solid #f00;
+}  
+  
+
+.lp2-select.input-success {
+    border: 1px solid #30b437;
+}  
+  
+p.input-error {
+    color: #f00;
+    text-align: left;
+}  
+  
+.user-list-pic .staff-name.ulist-custom {
+    color: #484848;
+}
+
+.footer-info a{
+color: #676a71;
+}
+
+.wel-sec.signup.share-recomm {
+    overflow-y: scroll;
+}
+
+
+.share-recomm.wel-sec[data-scrollbar] .scrollbar-thumb {
+    background: transparent;
+}
+
+.col-userlist .userlist{
+position: relative;
+}
+
+
+.col-userlist .userlist::before {
+    border-bottom: 8px solid transparent;
+    border-right: 14px solid #ededed;
+    border-top: 8px solid transparent;
+    content: "\a ";
+    height: 0;
+    left: -14px;
+    position: absolute;
+    top: 32px;
+    width: 0;
+}
+  
+  .call-north a{
+    font-family: Lato, sans-serif;
+    color: #282a30;
+    font-size: 18px;
+    text-decoration: none;
+}
+  
+  .link {
+    cursor: pointer;
+  }
+  
+  .link.float-right:hover {
+    border-color: #fff;
+  }
+  .wel-sec.signup {
+      overflow-y: scroll;
+  }
+  
+  .popup-close .close-popup{
+    color:#2a262b;text-decoration:none;
+  }
+  
+@media (max-width: 479px){
+    .signup-section.mob-port .user-list-pic {
+        width: 100%;float:none;
+    }
+    .signup-section.mob-port .user-list-text {
+        margin-left: 0px;
+    }  
+  .wel-sec.signup {
+      overflow-y: scroll;
+  }
+  .user-list-pic {
+       float: none;
+  }  
+  
+}
+  
+@media (max-width: 767px){
+  
+  .footer-area {
+    clear: both;
+  }
+  
+  .villa-landing .callus-div {
+      display: block;
+
+  }  
+  
+
+}  
+  
+  
+</style>
+<!-- Start Visual Website Optimizer Asynchronous Code -->
+<script type='text/javascript'>
+var _vwo_code=(function(){
+var account_id=232391,
+settings_tolerance=2000,
+library_tolerance=2500,
+use_existing_jquery=false,
+// DO NOT EDIT BELOW THIS LINE
+f=false,d=document;return{use_existing_jquery:function(){return use_existing_jquery;},library_tolerance:function(){return library_tolerance;},finish:function(){if(!f){f=true;var a=d.getElementById('_vis_opt_path_hides');if(a)a.parentNode.removeChild(a);}},finished:function(){return f;},load:function(a){var b=d.createElement('script');b.src=a;b.type='text/javascript';b.innerText;b.onerror=function(){_vwo_code.finish();};d.getElementsByTagName('head')[0].appendChild(b);},init:function(){settings_timer=setTimeout('_vwo_code.finish()',settings_tolerance);var a=d.createElement('style'),b='body{opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;}',h=d.getElementsByTagName('head')[0];a.setAttribute('id','_vis_opt_path_hides');a.setAttribute('type','text/css');if(a.styleSheet)a.styleSheet.cssText=b;else a.appendChild(d.createTextNode(b));h.appendChild(a);this.load('//dev.visualwebsiteoptimizer.com/j.php?a='+account_id+'&u='+encodeURIComponent(d.URL)+'&r='+Math.random());return settings_timer;}};}());_vwo_settings_timer=_vwo_code.init();
+</script>
+<!-- End Visual Website Optimizer Asynchronous Code -->
+<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/tx9uxfb3';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>

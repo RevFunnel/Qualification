@@ -1,0 +1,449 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="http://clientproject.in/rent-villas/xhtml/grid/pinterest_grid.js"></script>
+<script src="http://clientproject.in/rent-villas/xhtml/js/mailcheck.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+
+
+<script type="text/javascript">  
+	var allcomments = ''; 
+	
+	//recommendations methods
+	function getListing(jsondata,allcomments){
+		var output = '';          
+		jQuery.each(jsondata, function (i, v) {
+			var lnum = i+1;
+			output += getlistdata(v,i,lnum,allcomments);
+		});
+		return output;        
+	} 
+	
+	function getGridColumn(){
+		var grid_column = 3;            
+		var mq7 = window.matchMedia("(max-width: 700px)");
+		var mq9 = window.matchMedia("(max-width: 900px)");
+
+		if(mq7.matches){
+			grid_column = 1;
+		}else if(mq9.matches){
+			grid_column = 2;
+		}                  
+		return grid_column;          
+	} 
+	
+	function gridifyColumn(obj){
+		var gcol = getGridColumn();
+		 gcol = parseInt(gcol);
+	  
+		jQuery(obj).pinterest_grid({
+		  no_columns: gcol,
+		  padding_x: 10,
+		  padding_y: 10,
+		  margin_bottom: 20,
+		  single_column_breakpoint: 700
+		});      
+	}
+	
+	function showSignupform(){
+	  var s = localStorage.getItem('signed_up');
+	  if(!s){
+		  jQuery('.signup-section').fadeIn('slow'); 
+	  }
+	} 
+
+	//utility methods
+	function concatValues(param,value,type){
+		var outp = ''; 
+		if(getParam(param)){
+		  var parval = getParam(param);
+		  if((type == 'int' && parseInt(parval)> 0) || (type == 'string' && $.trim(parval) !='')){
+			  outp += value;
+		  }			  
+		}	
+		return outp;		  
+	}
+	  
+	function cleanStr(str){
+		str = $.trim(str);
+		//str = str.replace(/(^,)|(,$)/g, "");
+		return str;		  
+	}
+	
+	function numberWithCommas(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+	
+	function getAllMonths(start, end) {
+		var s = moment(start);
+		var e = moment(end);
+		var a = [];
+
+		while(s < e) {
+			a.push(s.clone());
+			s.add(1,'M');
+		}
+
+		return a;
+	}
+	
+	function getParam(name) {
+		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+		return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
+  
+	var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	  var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	  return v.toString(16);
+	});  
+	
+	
+	function setHeight() {
+	   var vph = $(window).height();vph =  vph - 35; var windowHeight = vph + 'px';
+		$('.share-recomm.wel-sec').css('height', windowHeight);
+		if(Webflow.isMobile()){
+		   $('.signup.wel-sec').css('height', windowHeight);
+		}
+	};
+	
+	// Single Page Form: Populate single page forms drop downs
+	  
+    function populate_who_is_travelling($){
+     var who_is_travelling = 
+       [
+         {text:"Group with children", val:"1"},
+         {text:"Group of adults", val:"2"},
+         {text:"Just two of us", val:"3"}
+       ];      
+      
+	  var sobj = $('#who_is_travelling');
+      $(sobj).empty();
+      $(sobj).append($('<option>').text("Please choose...").attr('value', ''));
+      $.each(who_is_travelling, function(i, obj){
+        $(sobj).append($('<option>').text(obj.text).attr('value', obj.val));
+      });        
+      
+    }
+  
+     function populate_when_do_you_plan_to_travel($){
+		  var today = new Date();
+		  var start = new Date(today.getFullYear(), today.getMonth(), 1);
+		  var x = 36;
+		  var end = new Date();
+		  end.setMonth(start.getMonth() + x);
+		  var result = getAllMonths(start, end);
+
+		  var sobj = $("#when_do_you_plan_to_travel");
+		  $(sobj).empty();
+		  $(sobj).append($('<option>').text("Please choose...").attr('value', ''));
+	  
+		  $.each(result, function(i, obj) {
+			sobj.append($("<option />").val(moment(obj).format('MM/DD/YYYY')).html(moment(obj).format('MMM YYYY')));
+		  });      
+     
+	}
+
+	function populate_what_is_your_max_weekly_budget($){
+		var s = 1000;
+		var e = 10000;
+		var prices = [];
+		while (s < e) {
+		 prices.push(s);
+		  s = s + 1000;
+		}
+
+		s = 10000;
+		e = 20000;
+		while (s < e) {
+		prices.push(s);
+		s = s + 2000;
+		}
+		prices.push(25000);
+		prices.push(35000);
+		prices.push(60000);
+		prices.push(80000);
+
+		var sobj = $("#what_is_your_max_weekly_budget");
+		$(sobj).empty();
+		$(sobj).append($('<option>').text("Please choose...").attr('value', 0));	
+		  
+		$.each(prices, function(i, val) { 
+		  sobj.append($("<option />").val(val).html('$' + numberWithCommas(val)));
+		});		  
+
+   }    
+  
+  
+   function populate_how_many_people_are_traveling($){
+	   
+		  var s = 1;
+		  var e = 18;
+		  var a = [];
+		  while (s < e) {
+			 a.push(s);
+			  s++;
+		  }
+
+		  s = 20;
+		  e = 32;
+		  while (s < e) {
+			a.push(s);
+			s = s + 2;
+		  }  
+
+		  var sobj = $("#how_many_people_are_traveling");
+		  $(sobj).empty();
+		  $(sobj).append($('<option>').text("Please choose...").attr('value', 0)); 
+  
+		  $.each(a, function(i, val) { 
+			  sobj.append($("<option />").val(val).html(val));
+		  });   
+	   
+   }    
+
+	function populate_how_long_will_you_stay($){
+   
+		var numdays = 
+		   [
+			 {text:"less than a week", val:"1"},
+			 {text:"1 week", val:"7"},
+			 {text:"2 weeks", val:"14"},
+			 {text:"3 weeks", val:"21"},
+			 {text:"1 month or more", val:"30"},
+		   ];
+       
+		var sobj = $("#how_long_will_you_stay");
+		$(sobj).empty();
+		$(sobj).append($('<option>').text("Please choose...").attr('value', 0)); 
+		$.each(numdays, function(i, val) { 
+		  sobj.append($("<option />").val(val.val).html(val.text));
+		});
+   }  
+  
+	function populate_form_fields($){
+		populate_who_is_travelling($);
+		populate_when_do_you_plan_to_travel($);
+		populate_what_is_your_max_weekly_budget($);   
+		populate_how_many_people_are_traveling($);
+		populate_how_long_will_you_stay($);
+	}
+  
+	Webflow.push(function () {
+		var fulls = $('.ban-fullpage');
+		var win = $(window);
+		
+		function banChange(){
+		   var winh = win.height();
+		   var winh80 = winh * 80 / 100;       
+			if(!$('.step0').is(":visible")){
+			// fulls.height(winh);
+		  }else{
+			 //fulls.height(winh80);
+		  }
+		}
+    
+		Webflow.resize.on(function () {   
+			banChange();  
+			if($('#recommend-list').length > 0){
+			 gridifyColumn($('#recommend-list'));
+			}
+		});
+    
+		$('.step0,.step1,.step2,.step3,.step4,.step5,.step6').on('click',function(e){
+		  //banChange();  
+		});
+	});  
+  
+	function getlistdata(list,i,lnum,allcomments){
+
+		var output = '';
+		var listurl = 'http://www.rentvillas.com/PropertyDetail.aspx?Catalog=' + list.CatalogId;	
+
+		var commentdata = '';
+
+		$.each(allcomments.items, function(l, z) {
+			if(list.CatalogId == z.fields.productId){
+			   $.each(z.fields.recommendations, function(k, u) {
+			   
+					var recomm_sys_id = u.sys.id;					   
+					var comment = '';
+
+					$.each(allcomments.includes.Entry, function(i, v) {
+						if (v.sys.id == recomm_sys_id) {
+							comment = v.fields.comment;
+							var staff_id = v.fields.staff.sys.id;
+							$.each(allcomments.includes.Entry, function(i, v) {
+								if (v.sys.id == staff_id) {
+									var staff_name = v.fields.name;
+									var photo_id = v.fields.photo.sys.id;
+									$.each(allcomments.includes.Asset, function(i, v) {
+										if (v.sys.id == photo_id) {
+											var photo_title = v.fields.title;
+											var photo_url = v.fields.file.url; 							 
+											commentdata += '<div class="user-list"><div class="user-list-pic"><img src="' + photo_url + '"></div><div class="user-list-text">' + comment + '<br/>- <a href="#" class="staff-name" onclick="Intercom(\'showNewMessage\', \'\')">' + staff_name + ' from RentVillas</a></div></div>';
+										}
+									});              
+								}
+							});
+						}
+					});     
+				});                  
+			}             
+		});
+
+		output += '<article class="white-panel art-list"><figure><a target="_blank" href="' + listurl + '"><img src="' + list.PrimaryImage + '"></a><figcaption><h4><a target="_blank" href="' + listurl + '">Recommendation #'+lnum+' - <span class="villa-name">' + list.LocationName + '</span></a></h4></figcaption>   </figure>   '+commentdata+'</article>';					
+
+		return output;        
+	}
+  
+
+  
+	function getCommentJson(pid){
+		var accessToken = '5c2dd986b12e51e663a6c2750a63cf6f6ce6128098a9bd3e721ad6239e6267d0';
+		var product_ids = pid;          
+		var retdata = false;		
+		$.ajax({
+			url: 'https://cdn.contentful.com/spaces/y315od15q5s0/entries',
+			async: false,
+			data: {
+				access_token : accessToken,
+				content_type : 'product',
+				include : 5,
+				'fields.productId[in]' : product_ids            
+			},
+			error: function() {
+				return false;
+			},
+			dataType: 'json',
+			success: function(rdata) {              
+			  retdata = rdata;                   
+			},
+				type: 'GET'
+			});	
+		  
+			return retdata;
+	}
+  
+    $.noConflict();
+  
+    jQuery(document).ready(function($){ 
+		
+		setHeight();
+  
+		$(window).resize(function() {
+			setHeight();
+		});        
+        
+		//prevent scrolling when the sign up form is showing
+		$(".signup.wel-sec").mouseenter(function(){
+			$(window).bind("scroll", function(e){
+				e.preventDefault();
+			}); 
+		});        
+
+		Scrollbar.initAll();
+		
+		//fades out the share form when the close button is pressed
+		$('.popup-close').on('click','.close-popup',function(e){
+		   $(".send-recomm-sec").fadeOut();
+		   e.preventDefault();
+		});
+			
+		//fades out the share form whent he button is pressed
+		$("body").click(function(event){
+		  var $target = $(event.target);
+		  if(!$target.is(".send-recommendation-btn")){
+			 $(".send-recomm-sec").fadeOut();
+		  }
+		});
+
+		$(".send-recomm-sec .filled").click(function(e){
+		   e.stopPropagation();
+		});        
+		
+		//Click on change answer
+		$('.change-ans').on('click',function(e){
+			history.go(-1); 
+			e.preventDefault();
+		});
+			
+		//Call us button click
+		$('.callus-btn').on('click',function(e){
+			$('.callus-div').toggle();
+			e.preventDefault();
+		});
+
+		//The sign up form 
+		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
+			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
+		   
+			Intercom('boot', {  
+				app_id: 'tx9uxfb3',  
+				email: $('#email').val(),
+				created_at: new Date(),
+				name: $('#name').val(),
+				user_id: '9876'
+			});
+		   
+			e.preventDefault();
+		});
+        
+        $('#wf-form-sendRecommendationForm').on('click','.recommend-button.send-recomm-btn',function(e){
+           $('#wf-form-sendRecommendationForm .send-recomm-subbtn').trigger('click');
+          e.preventDefault();
+        });    
+        
+        $('.send-recommendation-btn').on('click',function(e){
+                  // console.log('clicked');
+           $( "#wf-form-sendRecommendationForm" )[0].reset();
+           $('.send-recomm-sec').fadeIn('slow');  
+           e.preventDefault();
+        });      
+        
+        $( "#wf-form-sendRecommendationForm" ).submit(function( event ) {
+            $('.send-recomm-filled .user-list-top').fadeOut('slow');    
+            setTimeout( function(){   
+                 $( "#wf-form-sendRecommendationForm" )[0].reset();
+                    $('.w-section.send-recomm-sec').hide();
+                    $('.recomm-success-msg').hide();
+              $( "#wf-form-sendRecommendationForm" ).fadeIn();
+              $('.send-recomm-filled .user-list-top').fadeIn();    
+
+                    
+              
+            }, 5000);  
+        });
+        
+        
+        $( "#wf-form-emailSignupForm" ).submit(function( event ) {
+            $('.signup-section').fadeOut('slow');    
+             localStorage.setItem('signed_up','yes');      
+          
+          var date_time = Math.round(new Date().getTime()/1000);
+          
+          var sname = $( "#wf-form-emailSignupForm #name" ).val();
+          var semail = $( "#wf-form-emailSignupForm #email" ).val();          
+         
+            window.Intercom("boot", {
+                app_id: "tx9uxfb3",
+                name: sname, 
+                email: semail,
+                created_at: date_time
+            });
+          
+          
+        });        
+        
+        
+      });
+  
+
+</script>
+
+
+
+
