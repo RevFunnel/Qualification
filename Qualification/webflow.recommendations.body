@@ -10,16 +10,13 @@
 		$('.footer-bar').toggle();
 		$('.onboarding-header').toggle();
 		
-        $('#user_id').val($.cookie('rv_user_id'));
-	  
-		var location_id = getParam('locationId');
+        var location_id = getParam('locationId');
 		var budget = getParam('weeklyBudget');
 		var guests = getParam('guests');
-      
 		var year = getParam('Year');
+		var Month = getParam('Month');
 		var location = getParam('location');    
 		var groupType = getParam('groupType');    
-		var Month = getParam('Month');    
 		var howLong = getParam('howLong');    
 		var location = getParam('location');    
       
@@ -28,103 +25,95 @@
           mainhead = 'Your '+year+' Trip to '+location;
         }
       
-             var pricetext ='';
-		     var text_m = '';
-       
-       // if(getParam('weeklyBudget') && getParam('location') && getParam('groupType') && getParam('guests') && getParam('Month') && getParam('Year') && getParam('howLong')){
-		   
-		   if(getParam('weeklyBudget') && parseInt(budget)> 0){
-			   pricetext = "<span class='highlight'>$" + budget + "</span> weekly budget"; 
-		   }		   
-           var changeans = "<a href='#' onClick='history.go(-1);' class='text-muted'>[change my answers]</a>"; 
-		   
-		   
-           var groupTypeVal = groupType + ', ';
-           var groupTypeTxt = concatValues('groupType',groupTypeVal,'string');	
-		   
-           var guestsVal = guests + ' travelers, ';
-           var guestsTxt = concatValues('guests',guestsVal,'int');
+		var pricetext ='';
+		var text_m = '';
+	   
+		if(getParam('weeklyBudget') && parseInt(budget)> 0){
+		   pricetext = "<span class='highlight'>$" + budget + "</span> weekly budget"; 
+		}		   
+		var changeans = "<a href='#' onClick='history.go(-1);' class='text-muted'>[change my answers]</a>"; 
 
-           var priceVal = pricetext + ', ';
-           var priceTxt = concatValues('weeklyBudget',priceVal,'int');  
+		var groupTypeVal = groupType + ', ';
+		var groupTypeTxt = concatValues('groupType',groupTypeVal,'string');	
 
-           var monthVal = Month + ' ';
-           var monthTxt = concatValues('Month',monthVal,'string');	   
+		var guestsVal = guests + ' travelers, ';
+		var guestsTxt = concatValues('guests',guestsVal,'int');
 
-		   var yearVal = year + ', ';
-           var yearTxt = concatValues('Year',yearVal,'int');
-		   
-		   var howlongVal = howLong + ' ';
-           var howlongTxt = concatValues('howLong',howlongVal,'int');		   
-		   
-          text_m += groupTypeTxt + guestsTxt + priceTxt + monthTxt + yearTxt + howlongTxt+ changeans;
-		  text_m = cleanStr(text_m);
+		var priceVal = pricetext + ', ';
+		var priceTxt = concatValues('weeklyBudget',priceVal,'int');  
+
+		var monthVal = Month + ' ';
+		var monthTxt = concatValues('Month',monthVal,'string');	   
+
+		var yearVal = year + ', ';
+		var yearTxt = concatValues('Year',yearVal,'int');
+
+		var howlongVal = howLong + ' ';
+		var howlongTxt = concatValues('howLong',howlongVal,'int');		   
+
+		text_m += groupTypeTxt + guestsTxt + priceTxt + monthTxt + yearTxt + howlongTxt+ changeans;
+		text_m = cleanStr(text_m);
 		  
-		  
-       // }     
         text_m = text_m.replace(/(^,)|(,$)/g, "");
 
-       
-       $('.page-head strong').text(mainhead);
-       $('.text-muted.left-align').html(text_m); 
+		$('.page-head strong').text(mainhead);
+		$('.text-muted.left-align').html(text_m); 
 
-     var allcomments = '';
+		var allcomments = '';
 	 
-	   if(!getParam('weeklyBudget')){
+		//set defaults
+		if(!getParam('weeklyBudget')){
 		   budget = 0;
-	   }
-	   if(!getParam('guests')){
+		}
+		if(!getParam('guests')){
 		   guests = 0;
-	   }
-	   if(!getParam('locationId')){
+		}
+		if(!getParam('locationId')){
 		   location_id = 4945;
-	   }	   
+		}	   
       
-     // if(getParam('weeklyBudget') && getParam('guests')  && getParam('locationId')){
-                         
-      $.ajax({
-         url: 'http://www.rentvillas.com/api/search',
-         data: {
-            locationId : location_id,
-            budget : budget,
-            guests : guests,
-            results : 12            
-         },
-         error: function() {
+                        
+		$.ajax({
+			url: 'http://www.rentvillas.com/api/search',
+			data: {
+				locationId : location_id,
+				budget : budget,
+				guests : guests,
+				results : 12            
+				},
+			error: function() {
+				},
+			dataType: 'json',
+			async: false,
+			success: function(searchResults) {        
+					var pids = '';
+					$.each(searchResults,function(i,v){
+					  pids += ',' + v.CatalogId;
+					});   
+					 
+					pids = pids.replace(/(^,)|(,$)/g, "");
+					 
+					allcomments = getCommentJson(pids);
+					 
+					var listd = getListing(searchResults, allcomments);
 
-         },
-         dataType: 'json',
-         async: false,
-         success: function(searchResults) {        
-            var pids = '';
-            $.each(searchResults,function(i,v){
-              pids += ',' + v.CatalogId;
-            });   
-             
-            pids = pids.replace(/(^,)|(,$)/g, "");
-             
-            allcomments = getCommentJson(pids);
-             
-            var listd = getListing(searchResults, allcomments);
-			
-			setTimeout( function() {
-				
-				$('.nolist-loader').fadeOut('slow',function(){
-					$(this).remove();
-					$('.mainlist-left').toggle();
-					$('.mainlist-right').toggle();
-					$('.footer-area').toggle();
-					$('.footer-bar').toggle();
-					$('.onboarding-header').toggle();
-					$('#recommend-list').append(listd);             
-					gridifyColumn($('#recommend-list'));                    
-					setTimeout( showSignupform, 2500);  
-					});
-				}, 4500);
-         },
-         type: 'GET'
-      });
-     //} 
+					setTimeout( function() {
+						$('.nolist-loader').fadeOut('slow',function(){
+								$(this).remove();
+								$('.mainlist-left').toggle();
+								$('.mainlist-right').toggle();
+								$('.footer-area').toggle();
+								$('.footer-bar').toggle();
+								$('.onboarding-header').toggle();
+								$('#recommend-list').append(listd);             
+								gridifyColumn($('#recommend-list'));                    
+								setTimeout( showSignupform, 2500);  
+							});
+					}, 4500);
+				},
+				type: 'GET'
+			});
+
     });
     
 </script>    
