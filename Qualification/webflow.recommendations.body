@@ -9,6 +9,8 @@
 		$('.footer-area').toggle();
 		$('.footer-bar').toggle();
 		$('.onboarding-header').toggle();
+		
+        $('#user_id').val($.cookie('rv_user_id'));
 	  
 		var location_id = getParam('locationId');
 		var budget = getParam('weeklyBudget');
