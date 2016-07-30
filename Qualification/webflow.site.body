@@ -1,6 +1,4 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="http://clientproject.in/rent-villas/xhtml/grid/pinterest_grid.js"></script>
@@ -10,6 +8,32 @@
 
 <script type="text/javascript">  
 	var allcomments = ''; 
+	
+	//get ip
+	$.getJSON('//ip-api.com/json?callback=?', function(data) {
+		$('#zip').val(data.zip);
+		$('#user_region').val(data.region);
+		$('#ip').val(data.query);
+	});
+	
+	//identify the user if new 
+	if (!!$.cookie('rv_user_id')) {
+		//have cookie, so check if the user has signed up
+		var s = localStorage.getItem('signed_up');
+		if(!s){
+			window.Intercom("boot", {
+				app_id: "tx9uxfb3",
+				user_id: $.cookie('rv_user_id')
+			});
+		}
+		
+    }else {
+		var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+			return v.toString(16);
+		});	
+		$.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
+	}
 	
 	//recommendations methods
 	function getListing(jsondata,allcomments){
@@ -51,7 +75,7 @@
 	  var s = localStorage.getItem('signed_up');
 	  if(!s){
 		  jQuery('.signup-section').fadeIn('slow'); 
-	  }
+	  } 
 	} 
 
 	//utility methods
@@ -96,12 +120,7 @@
 		return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
   
-	var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-	  var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-	  return v.toString(16);
-	});  
-	
-	
+
 	function setHeight() {
 	   var vph = $(window).height();vph =  vph - 35; var windowHeight = vph + 'px';
 		$('.share-recomm.wel-sec').css('height', windowHeight);
@@ -380,15 +399,6 @@
 		//The sign up form 
 		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
 			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
-		   
-			Intercom('boot', {  
-				app_id: 'tx9uxfb3',  
-				email: $('#email').val(),
-				created_at: new Date(),
-				name: $('#name').val(),
-				user_id: '9876'
-			});
-		   
 			e.preventDefault();
 		});
         
@@ -398,7 +408,6 @@
         });    
         
         $('.send-recommendation-btn').on('click',function(e){
-                  // console.log('clicked');
            $( "#wf-form-sendRecommendationForm" )[0].reset();
            $('.send-recomm-sec').fadeIn('slow');  
            e.preventDefault();
@@ -421,21 +430,23 @@
         
         $( "#wf-form-emailSignupForm" ).submit(function( event ) {
             $('.signup-section').fadeOut('slow');    
-             localStorage.setItem('signed_up','yes');      
+            localStorage.setItem('signed_up','yes');  
           
-          var date_time = Math.round(new Date().getTime()/1000);
-          
-          var sname = $( "#wf-form-emailSignupForm #name" ).val();
-          var semail = $( "#wf-form-emailSignupForm #email" ).val();          
+			var date_time = Math.round(new Date().getTime()/1000);
+
+			var sname = $( "#wf-form-emailSignupForm #name" ).val();
+			var semail = $( "#wf-form-emailSignupForm #email" ).val();          
          
-            window.Intercom("boot", {
-                app_id: "tx9uxfb3",
-                name: sname, 
-                email: semail,
-                created_at: date_time
-            });
-          
-          
+			//boot intercom
+			window.Intercom("boot", {
+				app_id: "tx9uxfb3",
+				name: sname, 
+				email: semail,
+				created_at: date_time,
+				user_id: uniqueId
+			});
+   
+         
         });        
         
         
