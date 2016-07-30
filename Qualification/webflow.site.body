@@ -9,33 +9,167 @@
 <script type="text/javascript">  
 	var allcomments = ''; 
 	
-	//get ip
-	$.getJSON('//ip-api.com/json?callback=?', function(data) {
-		$('#zip').val(data.zip);
-		$('#user_region').val(data.region);
-		$('#ip').val(data.query);
-	});
+	$.noConflict();
+  
+    jQuery(document).ready(function($){ 
+
 	
-	//identify the user if new 
-	if (!!$.cookie('rv_user_id')) {
-		//have cookie, so check if the user has signed up
-		var s = localStorage.getItem('signed_up');
-		if(!s){
+		//is visitor returning?
+		if (!!$.cookie('rv_user_id')) {
+			//yes, has cookie, so check if the user signed up already
+			
+			if(localStorage.getItem('signed_up')){
+				//yes, so boot intercom for user
+				window.Intercom("boot", {
+					app_id: "tx9uxfb3",
+					user_id: $.cookie('rv_user_id')
+				});
+			}
+			
+		}else {
+			//no, so assign a visitorid and set cookie
+			var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+				return v.toString(16);
+			});	
+			$.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
+		}
+
+		//add visitor details to any forms on the page
+		$.getJSON('//ip-api.com/json?callback=?', function(data) {
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "user_region")
+				.attr('value', data.regionName)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "user_country")
+				.attr('value', data.country)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "user_city")
+				.attr('value', data.city)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "zip")
+				.attr('value', data.zip)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "ip")
+				.attr('value', data.query)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "user_id")
+				.attr('value', $.cookie('rv_user_id'))
+				.appendTo('form');
+		});
+		
+		setHeight();
+  
+		$(window).resize(function() {
+			setHeight();
+		});        
+        
+		//prevent scrolling when the sign up form is showing
+		$(".signup.wel-sec").mouseenter(function(){
+			$(window).bind("scroll", function(e){
+				e.preventDefault();
+			}); 
+		});        
+
+		Scrollbar.initAll();
+		
+		//fades out the share form when the close button is pressed
+		$('.popup-close').on('click','.close-popup',function(e){
+		   $(".send-recomm-sec").fadeOut();
+		   e.preventDefault();
+		});
+			
+		//fades out the share form when the button is pressed
+		$("body").click(function(event){
+		  var $target = $(event.target);
+		  if(!$target.is(".send-recommendation-btn")){
+			 $(".send-recomm-sec").fadeOut();
+		  }
+		});
+
+		$(".send-recomm-sec .filled").click(function(e){
+		   e.stopPropagation();
+		});        
+		
+		//Click on change answer
+		$('.change-ans').on('click',function(e){
+			history.go(-1); 
+			e.preventDefault();
+		});
+			
+		//Call us button click
+		$('.callus-btn').on('click',function(e){
+			$('.callus-div').toggle();
+			e.preventDefault();
+		});
+
+		//The sign up form 
+		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
+			//trigger sign-up conversion
+			window._vis_opt_queue = window._vis_opt_queue || [];
+			window._vis_opt_queue.push(function() {_vis_opt_register_conversion(1,3);});
+
+			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
+			e.preventDefault();
+		});
+        
+        $('#wf-form-sendRecommendationForm').on('click','.recommend-button.send-recomm-btn',function(e){
+           $('#wf-form-sendRecommendationForm .send-recomm-subbtn').trigger('click');
+          e.preventDefault();
+        });    
+        
+        $('.send-recommendation-btn').on('click',function(e){
+           $( "#wf-form-sendRecommendationForm" )[0].reset();
+           $('.send-recomm-sec').fadeIn('slow');  
+           e.preventDefault();
+        });      
+        
+        $( "#wf-form-sendRecommendationForm" ).submit(function( event ) {
+            $('.send-recomm-filled .user-list-top').fadeOut('slow');    
+            setTimeout( function(){   
+                 $( "#wf-form-sendRecommendationForm" )[0].reset();
+                    $('.w-section.send-recomm-sec').hide();
+                    $('.recomm-success-msg').hide();
+              $( "#wf-form-sendRecommendationForm" ).fadeIn();
+              $('.send-recomm-filled .user-list-top').fadeIn();    
+
+                    
+              
+            }, 5000);  
+        });
+        
+        
+        $( "#wf-form-emailSignupForm" ).submit(function( event ) {
+            $('.signup-section').fadeOut('slow');    
+            localStorage.setItem('signed_up','yes');  
+          
+			var date_time = Math.round(new Date().getTime()/1000);
+
+			var sname = $( "#wf-form-emailSignupForm #name" ).val();
+			var semail = $( "#wf-form-emailSignupForm #email" ).val();          
+         
+			//boot intercom
 			window.Intercom("boot", {
 				app_id: "tx9uxfb3",
-				user_id: $.cookie('rv_user_id')
+				name: sname, 
+				email: semail,
+				created_at: date_time,
+				user_id: uniqueId
 			});
-		}
-		
-    }else {
-		var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-			return v.toString(16);
-		});	
-		$.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
-	}
+   
+        
+        });        
+        
+        
+    });
 	
-	//recommendations methods
+	
+	//METHODS: recommendations 
 	function getListing(jsondata,allcomments){
 		var output = '';          
 		jQuery.each(jsondata, function (i, v) {
@@ -148,22 +282,21 @@
       
     }
   
-     function populate_when_do_you_plan_to_travel($){
-		  var today = new Date();
-		  var start = new Date(today.getFullYear(), today.getMonth(), 1);
-		  var x = 36;
-		  var end = new Date();
-		  end.setMonth(start.getMonth() + x);
-		  var result = getAllMonths(start, end);
+	function populate_when_do_you_plan_to_travel($){
+		var today = new Date();
+		var start = new Date(today.getFullYear(), today.getMonth(), 1);
+		var x = 36;
+		var end = new Date();
+		end.setMonth(start.getMonth() + x);
+		var result = getAllMonths(start, end);
 
-		  var sobj = $("#when_do_you_plan_to_travel");
-		  $(sobj).empty();
-		  $(sobj).append($('<option>').text("Please choose...").attr('value', ''));
-	  
-		  $.each(result, function(i, obj) {
-			sobj.append($("<option />").val(moment(obj).format('MM/DD/YYYY')).html(moment(obj).format('MMM YYYY')));
-		  });      
-     
+		var sobj = $("#when_do_you_plan_to_travel");
+		$(sobj).empty();
+		$(sobj).append($('<option>').text("Please choose...").attr('value', ''));
+
+		$.each(result, function(i, obj) {
+		sobj.append($("<option />").val(moment(obj).format('MM/DD/YYYY')).html(moment(obj).format('MMM YYYY')));
+		});      
 	}
 
 	function populate_what_is_your_max_weekly_budget($){
@@ -250,19 +383,20 @@
 		populate_how_many_people_are_traveling($);
 		populate_how_long_will_you_stay($);
 	}
-  
+ 
+	//override webflows resize function
 	Webflow.push(function () {
 		var fulls = $('.ban-fullpage');
 		var win = $(window);
 		
 		function banChange(){
-		   var winh = win.height();
-		   var winh80 = winh * 80 / 100;       
+			var winh = win.height();
+			var winh80 = winh * 80 / 100;       
 			if(!$('.step0').is(":visible")){
-			// fulls.height(winh);
-		  }else{
-			 //fulls.height(winh80);
-		  }
+				// fulls.height(winh);
+			}else{
+				//fulls.height(winh80);
+			}
 		}
     
 		Webflow.resize.on(function () {   
@@ -347,110 +481,7 @@
 			return retdata;
 	}
   
-    $.noConflict();
-  
-    jQuery(document).ready(function($){ 
-		
-		setHeight();
-  
-		$(window).resize(function() {
-			setHeight();
-		});        
-        
-		//prevent scrolling when the sign up form is showing
-		$(".signup.wel-sec").mouseenter(function(){
-			$(window).bind("scroll", function(e){
-				e.preventDefault();
-			}); 
-		});        
 
-		Scrollbar.initAll();
-		
-		//fades out the share form when the close button is pressed
-		$('.popup-close').on('click','.close-popup',function(e){
-		   $(".send-recomm-sec").fadeOut();
-		   e.preventDefault();
-		});
-			
-		//fades out the share form whent he button is pressed
-		$("body").click(function(event){
-		  var $target = $(event.target);
-		  if(!$target.is(".send-recommendation-btn")){
-			 $(".send-recomm-sec").fadeOut();
-		  }
-		});
-
-		$(".send-recomm-sec .filled").click(function(e){
-		   e.stopPropagation();
-		});        
-		
-		//Click on change answer
-		$('.change-ans').on('click',function(e){
-			history.go(-1); 
-			e.preventDefault();
-		});
-			
-		//Call us button click
-		$('.callus-btn').on('click',function(e){
-			$('.callus-div').toggle();
-			e.preventDefault();
-		});
-
-		//The sign up form 
-		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
-			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
-			e.preventDefault();
-		});
-        
-        $('#wf-form-sendRecommendationForm').on('click','.recommend-button.send-recomm-btn',function(e){
-           $('#wf-form-sendRecommendationForm .send-recomm-subbtn').trigger('click');
-          e.preventDefault();
-        });    
-        
-        $('.send-recommendation-btn').on('click',function(e){
-           $( "#wf-form-sendRecommendationForm" )[0].reset();
-           $('.send-recomm-sec').fadeIn('slow');  
-           e.preventDefault();
-        });      
-        
-        $( "#wf-form-sendRecommendationForm" ).submit(function( event ) {
-            $('.send-recomm-filled .user-list-top').fadeOut('slow');    
-            setTimeout( function(){   
-                 $( "#wf-form-sendRecommendationForm" )[0].reset();
-                    $('.w-section.send-recomm-sec').hide();
-                    $('.recomm-success-msg').hide();
-              $( "#wf-form-sendRecommendationForm" ).fadeIn();
-              $('.send-recomm-filled .user-list-top').fadeIn();    
-
-                    
-              
-            }, 5000);  
-        });
-        
-        
-        $( "#wf-form-emailSignupForm" ).submit(function( event ) {
-            $('.signup-section').fadeOut('slow');    
-            localStorage.setItem('signed_up','yes');  
-          
-			var date_time = Math.round(new Date().getTime()/1000);
-
-			var sname = $( "#wf-form-emailSignupForm #name" ).val();
-			var semail = $( "#wf-form-emailSignupForm #email" ).val();          
-         
-			//boot intercom
-			window.Intercom("boot", {
-				app_id: "tx9uxfb3",
-				name: sname, 
-				email: semail,
-				created_at: date_time,
-				user_id: uniqueId
-			});
-   
-         
-        });        
-        
-        
-      });
   
 
 </script>
