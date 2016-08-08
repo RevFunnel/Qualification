@@ -1,0 +1,81 @@
+<script type="text/javascript">
+    jQuery(document).ready(function($){
+      var govar = '-1';
+      if(localStorage.getItem('govar')){
+      var govar = localStorage.getItem('govar');
+      }
+      
+      localStorage.setItem('govar','-1'); 
+      if(localStorage.getItem('banner_image') && !Webflow.isMobile()){     
+         var banner_image = localStorage.getItem('banner_image');       
+         var imgcode = 'url('+banner_image+')';       
+        // $('#full').css('background-image','url(img/1.jpg)');
+         $('#hero-banner-sec').css('background-image',imgcode);
+       }
+    
+       var qstr = '';
+       //  var qstr = window.location.href.slice(window.location.href.indexOf('?') + 1);
+        $('#area').val(getParam('area'));
+        $('#Region').val(getParam('area'));
+        $('#rvse').val(getParam('rvse'));
+        $('#rvcp').val(getParam('rvcp'));
+        $('#rvkw').val(getParam('rvkw'));
+        $('#kwmt').val(getParam('kwmt'));
+        $('#kw').val(getParam('kw'));
+        $('#MatchType').val(getParam('MatchType'));
+        $('#AdID').val(getParam('AdID'));
+        $('#gclid').val(getParam('gclid'));
+        $('#location').val(getParam('location'));
+        $('#locationId').val(getParam('locationId'));
+        
+        var areaval= $('#area').val();
+        var locationval= $('#location').val();
+        var location_id= $('#locationId').val();
+        
+        qstr += 'area='+ areaval +'&location='+locationval + '&locationId='+location_id;
+
+
+        if (typeof vwo_variation !== 'undefined') {
+            $('#pageVariant').val(vwo_variation);
+        }else{
+            $('#pageVariant').remove();
+        }
+      
+        if($.cookie('rv_user_id') !== 'undefined'){          
+          $.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
+        }
+        $('#rv_anonymous_id').val($.cookie('rv_user_id'));
+      
+      
+      function submitForm(){
+             var formitems = $("form#wf-form-Recommendation-Form :input:checked").map(function(index, elm) {
+                  return {name: elm.name, type:elm.type, value: $(elm).val()};
+              });      
+              
+            jQuery.each(formitems, function (i, v) {
+                qstr += '&'+ v.name + '=' + v.value;
+            });
+              
+              //console.log(formitems);
+          $('.step6 .w-button.next-btn.hide-btn').trigger('click');
+      }     
+      
+      $('.step6 .w-radio.radio-wrap').on('click',function(){              
+             setTimeout(submitForm, 800);               
+      });      
+      
+      $('.link.goback-btn2').on('click',function(){  
+           var referer = document.referrer;
+          // window.location.href = referer;
+          // console.log(referer);
+             history.go(govar);        
+      });         
+      
+      $( "#wf-form-Recommendation-Form" ).submit(function( event ) {
+           window.location = 'http://visit.rentvillas.com/recommendations/?' + qstr;
+      
+      });
+      
+    });
+
+</script>
