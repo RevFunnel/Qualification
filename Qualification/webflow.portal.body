@@ -10,11 +10,12 @@
 		$('.footer-bar').toggle();
 		$('.onboarding-header').toggle();
 		
+		
         var location_id = getParam('locationId');
 		var budget = getParam('weeklyBudget');
 		var guests = getParam('guests');
-		var year = getParam('Year');
-		var Month = getParam('Month');
+		var guestTravelYear = getParam('Year');
+		var guestTravelMonth = getParam('Month');
 		var location = getParam('location');    
 		var groupType = getParam('groupType');    
 		var howLong = getParam('howLong');    
@@ -22,9 +23,13 @@
       
         var mainhead = '';
         if(getParam('Year') && getParam('location')){
-          mainhead = 'Your '+year+' Trip to '+location;
-        }
-      
+          mainhead = 'Your '+guestTravelYear+' Trip to '+location;
+        }else{
+			if(getParam('location')){
+				mainhead = 'Your Trip to '+location;
+			}
+		}
+	  
 		var pricetext ='';
 		var text_m = '';
 	   
@@ -42,10 +47,10 @@
 		var priceVal = pricetext + ', ';
 		var priceTxt = concatValues('weeklyBudget',priceVal,'int');  
 
-		var monthVal = Month + ' ';
+		var monthVal = guestTravelMonth + ' ';
 		var monthTxt = concatValues('Month',monthVal,'string');	   
 
-		var yearVal = year + ', ';
+		var yearVal = guestTravelYear + ', ';
 		var yearTxt = concatValues('Year',yearVal,'int');
 
 		var howlongVal = howLong + ' ';
@@ -72,14 +77,16 @@
 		   location_id = 4945;
 		}	   
       
-                        
 		$.ajax({
 			url: 'http://www.rentvillas.com/api/search',
 			data: {
-				locationId : location_id,
-				budget : budget,
-				guests : guests,
-				results : 12            
+					locationId : location_id,
+					budget : budget,
+					guests : guests,
+					travelMonth : (guestTravelMonth == '') ? 0 : moment().month(guestTravelMonth).format("M"),
+					travelYear : (guestTravelYear == '') ? 0 : guestTravelYear,
+					results : 12,
+					minimumResults : 6
 				},
 			error: function() {
 				},
@@ -95,8 +102,8 @@
 					 
 					allcomments = getCommentJson(pids);
 					 
-					var listd = getListing(searchResults, allcomments);
-
+					var listd = getHtmlForListings(searchResults, allcomments);
+					
 					setTimeout( function() {
 						$('.nolist-loader').fadeOut('slow',function(){
 								$(this).remove();
@@ -105,7 +112,7 @@
 								$('.footer-area').toggle();
 								$('.footer-bar').toggle();
 								$('.onboarding-header').toggle();
-								$('#recommend-list').append(listd);             
+								$('#recommend-list').append(listd); 
 								gridifyColumn($('#recommend-list'));                    
 								setTimeout( showSignupform, 2500);  
 							});
