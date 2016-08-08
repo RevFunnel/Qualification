@@ -193,8 +193,8 @@
 	//METHODS: recommendations 
 	
 	//builds array of ecommerice impression objects
-	function getEcommerceImpressionForItems(listingJson){
-		var impressions;          
+	function pushImpressionsToDataLayer(listingJson){
+		var impressions  = [];          
 		jQuery.each(listingJson, function (i, item) {
 			var lnum = i+1;
 			impressions.push(getEcommerceImpressionForItem(item, i, lnum));
@@ -215,6 +215,9 @@
 			var lnum = i+1;
 			output += getHtmlForListing(v,i,lnum, allcomments);
 		});
+		
+		pushImpressionsToDataLayer(listingJson);
+		
 		return output;        
 	} 
 	

@@ -10,7 +10,6 @@
 		$('.footer-bar').toggle();
 		$('.onboarding-header').toggle();
 		
-		
         var location_id = getParam('locationId');
 		var budget = getParam('weeklyBudget');
 		var guests = getParam('guests');
