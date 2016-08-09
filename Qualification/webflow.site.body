@@ -192,6 +192,110 @@
 	
 	//METHODS: recommendations 
 	
+	//this method standardizes comment data being pulled from contentful
+	function StandardizeCommentData(allComments, searchResults){
+	
+		//loop over our search results and look for comments from the comment data
+		$.each(searchResults, function(m, searchResult){
+			searchResult.comments = [];
+			
+			var comments = $.grep(allComments.items, function(e){ return e.fields.productId === searchResult.productId; });
+			
+			if (comments.length > 0) {
+
+				$.each(comments, function(index, comment) {
+			
+					$.each(comment.fields.recommendations, function(k, u) {
+				   
+					   var entries = $.grep(allComments.includes.Entry, function(e){ return e.sys.id === u.sys.id; });
+			
+						if (entries.length > 0) {
+						
+							$.each(entries, function(i, v) {
+								var comment = {};
+								comment.commentText = v.fields.comment;
+								
+								var staff = $.grep(allComments.includes.Entry, function(e){ return e.sys.id === v.fields.staff.sys.id; });
+
+								if (staff.length > 0) {							
+							
+									$.each(staff, function(i, v) {
+										comment.commenterName = v.fields.name;
+										
+										var staffPhotos = $.grep(allComments.includes.Asset, function(e){ return e.sys.id === v.fields.photo.sys.id; });
+
+										if (staffPhotos.length > 0) {							
+											//var photo_title = v.fields.title;
+											comment.commenterImageUrl = staffPhotos[0].fields.file.url;
+										}              
+									});
+								}							
+								searchResult.comments.push(comment);
+							});  
+						
+						}                  
+					});
+		  
+				});
+			}	
+
+		});
+		
+		return searchResults;
+	}
+	
+	function StandardizeResults(searchResults){
+		var result = [];
+		for (var i = 0; i < searchResults.length; i++){
+			var obj = searchResults[i];
+			
+			obj.Parents.splice(0,1);
+			obj.Parents.splice(obj.Parents.length - 1, 1);
+			var arrNames = $.map(obj.Parents, function(c){return c.LocationName});
+			
+			result.push({
+				'index':i+1,
+				'name':obj.LocationName,
+				'productId': obj.CatalogId.toString(),
+				'url': 'http://www.rentvillas.com/PropertyDetail.aspx?Catalog=' + obj.CatalogId,
+				'image': obj.PrimaryImage,
+				'categories': arrNames,
+				'categoriesAsAPath': arrNames.join('/'),
+			});
+		}
+		return result;
+	}
+	
+	/**
+	 * Call this function when a user clicks on a product link. This function uses the event
+	 * callback datalayer variable to handle navigation after the ecommerce data has been sent
+	 * to Google Analytics.
+	 * @param {Object} productObj An object representing a product.
+	 */
+	function pushClickToDataLayer(productObj) {
+	  dataLayer.push({
+		'event': 'productClick',
+		'ecommerce': {
+		  'click': {
+			'actionField': {'list': 'portal'},      // Optional list property.
+			'products': [{
+				  'name': productObj.name,                      // Name or ID is required.
+				  'id': productObj.productId,
+				  //'price': productObj.price,
+				  //'brand': productObj.brand,
+				  //'variant': productObj.variant,
+				  'position': productObj.position,
+				  'category' : productObj.categories,
+				  'list' : 'portal',
+			 }]
+		   }
+		 }/* ,
+		 'eventCallback': function() {
+		   document.location = productObj.url // removed callback since we aren't navigating away
+		 } */
+	  });
+	}
+	
 	//builds array of ecommerice impression objects
 	function pushImpressionsToDataLayer(listingJson){
 		var impressions  = [];          
@@ -212,8 +316,7 @@
 	function getHtmlForListings(listingJson, allcomments){
 		var output = '';          
 		jQuery.each(listingJson, function (i, v) {
-			var lnum = i+1;
-			output += getHtmlForListing(v,i,lnum, allcomments);
+			output += getHtmlForListing(v,i);
 		});
 		
 		pushImpressionsToDataLayer(listingJson);
@@ -463,70 +566,41 @@
 
 	//
 	function getEcommerceImpressionForItem(item, i, lnum){
-		item.Parents.splice(0,1);
-		item.Parents.splice(item.Parents.length - 1, 1);
+		
  		return {
-			  'id' : item.CatalogId,
-			  'name' : item.LocationName,
-			  'category' : $.map(item.Parents, function(obj){return obj.LocationName}).join('/'),
+			  'id' : item.productId,
+			  'name' : item.name,
+			  'category' : item.categories.join('/'),
 			  'list' : 'portal',
 			//'variant' : 'a variant to track',
 			  'position' : lnum,
 		};
 	}
 	
-	function getHtmlForListing(list,i,lnum,allcomments){
+	
+	
+	function getHtmlForListing(item,i){
+		// Grab the template script
+		var theTemplateScript = $("#listing-template").html();
 
-		var output = '';
-		var listurl = 'http://www.rentvillas.com/PropertyDetail.aspx?Catalog=' + list.CatalogId;	
+		// Compile the template
+		var theTemplate = Handlebars.compile(theTemplateScript);
 
-		var commentdata = '';
-
-		$.each(allcomments.items, function(l, z) {
-			if(list.CatalogId == z.fields.productId){
-			   $.each(z.fields.recommendations, function(k, u) {
-			   
-					var recomm_sys_id = u.sys.id;					   
-					var comment = '';
-
-					$.each(allcomments.includes.Entry, function(i, v) {
-						if (v.sys.id == recomm_sys_id) {
-							comment = v.fields.comment;
-							var staff_id = v.fields.staff.sys.id;
-							$.each(allcomments.includes.Entry, function(i, v) {
-								if (v.sys.id == staff_id) {
-									var staff_name = v.fields.name;
-									var photo_id = v.fields.photo.sys.id;
-									$.each(allcomments.includes.Asset, function(i, v) {
-										if (v.sys.id == photo_id) {
-											var photo_title = v.fields.title;
-											var photo_url = v.fields.file.url;
-											commentdata += '<div class="comment"><div class="comment-staff-photo">' +
-																'<img src="' + photo_url + '">' +
-																'</div>' +
-																'<div class="comment-text">' + comment + '<br/>- <a href="#" class="staff-name" onclick="Intercom(\'showNewMessage\', \'\')">' + staff_name + ' from RentVillas</a>' +
-																'</div>' +
-															'</div>';
-										}
-									});              
-								}
-							});
-						}
-					});     
-				});                  
-			}             
-		});
-
-		output += '<article class="white-panel art-list"><figure><a target="_blank" href="' + listurl + '"><img src="' + list.PrimaryImage + '"></a><figcaption><h4><a target="_blank" href="' + listurl + '">Recommendation #'+lnum+' - <span class="villa-name">' + list.LocationName + '</span></a></h4></figcaption>   </figure>   '+commentdata+'</article>';					
-
-		return output;        
+		// Pass our data to the template and return html
+		return theTemplate(item);
 	}
   
-
   
-	function getCommentJson(pid){
+	function getCommentJson(searchResults){
 		var accessToken = '5c2dd986b12e51e663a6c2750a63cf6f6ce6128098a9bd3e721ad6239e6267d0';
-		var product_ids = pid;          
+		
+		//get list of ids for which to get comments
+		var product_ids = '';
+		$.each(searchResults,function(i,v){
+		  product_ids += ',' + v.productId;
+		});   
+		product_ids = product_ids.replace(/(^,)|(,$)/g, "");
+		
 		var retdata = false;		
 		$.ajax({
 			url: 'https://cdn.contentful.com/spaces/y315od15q5s0/entries',
@@ -542,7 +616,7 @@
 			},
 			dataType: 'json',
 			success: function(rdata) {              
-			  retdata = rdata;                   
+			  retdata = StandardizeCommentData(rdata, searchResults);                    
 			},
 				type: 'GET'
 			});	

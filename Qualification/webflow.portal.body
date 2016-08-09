@@ -1,4 +1,43 @@
+
+
+
 <script type="text/javascript">
+
+	function OnSearchSuccess(searchResults) {   
+		//copy search results into standard object
+		var standardResults = StandardizeResults(searchResults);
+
+		//copy comments into standard object
+		var allcomments = getCommentJson(standardResults);
+		var listd = getHtmlForListings(standardResults, allcomments);
+		
+		setTimeout( function() {
+			$('.nolist-loader').fadeOut('slow',function(){
+					$(this).remove();
+					$('.mainlist-left').toggle();
+					$('.mainlist-right').toggle();
+					$('.footer-area').toggle();
+					$('.footer-bar').toggle();
+					$('.onboarding-header').toggle();
+					$('#recommend-list').append(listd); 
+					gridifyColumn($('#recommend-list'));                    
+					setTimeout( showSignupform, 2500);  
+					
+					//any clicks on a figure should create an ecommerce click object
+					$('figure').on('click',function(e){
+						
+						pushClickToDataLayer({
+							'productId':$(this).data('productid'),
+							'name':$(this).data('name'),
+							'position':$(this).data('position'),
+							'categories':$(this).data('categories'),
+						});
+					});
+					
+				});
+		}, 4500);
+	}
+
     jQuery(document).ready(function($){ 
 	
 		localStorage.setItem('govar','+1'); 
@@ -15,7 +54,6 @@
 		var guests = getParam('guests');
 		var guestTravelYear = getParam('Year');
 		var guestTravelMonth = getParam('Month');
-		var location = getParam('location');    
 		var groupType = getParam('groupType');    
 		var howLong = getParam('howLong');    
 		var location = getParam('location');    
@@ -63,8 +101,6 @@
 		$('.page-head strong').text(mainhead);
 		$('.text-muted.left-align').html(text_m); 
 
-		var allcomments = '';
-	 
 		//set defaults
 		if(!getParam('weeklyBudget')){
 		   budget = 0;
@@ -75,7 +111,8 @@
 		if(!getParam('locationId')){
 		   location_id = 4945;
 		}	   
-      
+		
+     
 		$.ajax({
 			url: 'http://www.rentvillas.com/api/search',
 			data: {
@@ -91,34 +128,9 @@
 				},
 			dataType: 'json',
 			async: false,
-			success: function(searchResults) {        
-					var pids = '';
-					$.each(searchResults,function(i,v){
-					  pids += ',' + v.CatalogId;
-					});   
-					 
-					pids = pids.replace(/(^,)|(,$)/g, "");
-					 
-					allcomments = getCommentJson(pids);
-					 
-					var listd = getHtmlForListings(searchResults, allcomments);
-					
-					setTimeout( function() {
-						$('.nolist-loader').fadeOut('slow',function(){
-								$(this).remove();
-								$('.mainlist-left').toggle();
-								$('.mainlist-right').toggle();
-								$('.footer-area').toggle();
-								$('.footer-bar').toggle();
-								$('.onboarding-header').toggle();
-								$('#recommend-list').append(listd); 
-								gridifyColumn($('#recommend-list'));                    
-								setTimeout( showSignupform, 2500);  
-							});
-					}, 4500);
-				},
-				type: 'GET'
-			});
+			success: OnSearchSuccess,
+			type: 'GET'
+		});
 
     });
     
