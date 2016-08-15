@@ -347,33 +347,6 @@ function populate_form_fields($){
 	populate_how_long_will_you_stay($);
 }
 
-//override webflows resize function
-Webflow.push(function () {
-	var fulls = $('.ban-fullpage');
-	var win = $(window);
-	
-	function banChange(){
-		var winh = win.height();
-		var winh80 = winh * 80 / 100;       
-		if(!$('.step0').is(":visible")){
-			// fulls.height(winh);
-		}else{
-			//fulls.height(winh80);
-		}
-	}
-
-	Webflow.resize.on(function () {   
-		banChange();  
-		if($('#recommend-list').length > 0){
-		 gridifyColumn($('#recommend-list'));
-		}
-	});
-
-	$('.step0,.step1,.step2,.step3,.step4,.step5,.step6').on('click',function(e){
-	  //banChange();    
-	});
-});  
-
 //
 function getEcommerceImpressionForItem(item, i, lnum){
 	

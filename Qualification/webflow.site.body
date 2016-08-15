@@ -229,7 +229,7 @@
 <script type="text/javascript" src="//clientproject.in/rent-villas/xhtml/js/mailcheck.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions"></script>
+<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js"></script>
 
 
 
