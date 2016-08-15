@@ -11,31 +11,9 @@
 		})();
 	}	
 	
-
-	//override webflows resize function
-	var Webflow = Webflow || [];
-	Webflow.push(function () {
-		
-		Webflow.resize.on(function () {   
-			if($('#recommend-list').length > 0){
-			 gridifyColumn($('#recommend-list'));
-			}
-		});
-
-	});  
-	
-    $(document).ready(function($){ 
-	
-		var hash = location.hash.replace('#', '');
-		
-		//	$.webshims.debug = "noCombo";
-		$(window).load(function(){
-			$.webshims.polyfill('forms');
-		});
-		if(hash.indexOf('noConflictExtreme') != -1){
-			webshims.cfg.no$Switch = true;
-			jQuery.noConflict(true);
-		}
+	$.noConflict();
+  
+    jQuery(document).ready(function($){ 
 
 		//is visitor returning?
 		if (!!$.cookie('rv_user_id')) {
