@@ -1,0 +1,205 @@
+.email-link {
+    color: #ff9600;
+} 
+  
+.alink {
+    color: #ff9600;    
+	text-decoration: none;
+}  
+  
+.change-ans {
+    cursor: pointer; 
+	display:inline-block;
+}
+    
+.comment-img {
+    float: left;
+    width: 38px;
+}
+  
+.art-list {
+    background-color: #fff;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    float: left;
+}
+.wall-f {
+    padding: 0 !important;
+}
+.art-list figure figcaption {
+    box-sizing: border-box;
+    float: left;
+    padding: 0;
+    width: 100%;
+}
+  
+#recommend-list .white-panel.art-list {
+    background-color: #f8f8fa;border-radius: 8px;padding: 14px;
+  	/*box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);*/
+}  
+  
+.art-list figure a img {
+    width: 100%;border-radius: 5px;
+}
+.art-list figure figcaption h4 {
+    color: #676a71;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 12px;
+}
+.art-list figure figcaption h4 a {
+    color: #676a71;
+    text-decoration: none;
+}
+.art-list figure figcaption h4 a:hover {
+    color: #ff9600;
+}
+.art-list .villa-name {
+ 	text-decoration: underline;
+  	color: #0000EE;
+ }
+.comment {
+    background: rgba(42, 38, 43, 0.2) none repeat scroll 0 0;
+    border: 1px solid #e1e1e5;
+    border-radius: 8px;
+    box-sizing: border-box;
+    float: left;
+    padding: 12px;
+    width: 100%; margin-bottom: 10px;
+    /*box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);*/
+}
+.comment-staff-photo {
+    width: auto;min-width: 40px;text-align: center;float:left;
+}
+  
+  
+ .comment-staff-photo .staff-name {
+    display: block;
+    font-size: 14px;
+    text-align: center;color: #7d7e81;
+}
+  
+  .comment-staff-photo > img {
+    max-width: 40px;
+}
+.comment-text {
+    color: #000000;
+    float: left;
+    font-size: 15px;
+    line-height: 20px;
+    margin-left: 15px;
+    width: 77%;
+}  
+  
+.comment-text a {		
+  	color: #000000;
+  }
+  
+.new-banner-right .select{
+  appearance:none;
+  -moz-appearance:none; 
+  -webkit-appearance:none;   
+}
+  
+.lp2-submit-btn {
+    cursor: pointer;
+}  
+  
+.select.input-error {
+    border: 1px solid #f00;
+}  
+  
+
+.select.input-success {
+    border: 1px solid #30b437;
+}  
+  
+p.input-error {
+    color: #f00;
+    text-align: left;
+}  
+  
+.comment-staff-photo .staff-name.ulist-custom {
+    color: #484848;
+}
+
+.footer-info a{
+color: #676a71;
+}
+
+.dialog.signup.share-recomm {
+    overflow-y: scroll;
+}
+
+
+.share-recomm.dialog[data-scrollbar] .scrollbar-thumb {
+    background: transparent;
+}
+
+.col-userlist .userlist{
+position: relative;
+}
+
+
+.col-userlist .userlist::before {
+    border-bottom: 8px solid transparent;
+    border-right: 14px solid #ededed;
+    border-top: 8px solid transparent;
+    content: "\a ";
+    height: 0;
+    left: -14px;
+    position: absolute;
+    top: 32px;
+    width: 0;
+}
+  
+  .call-north a{
+    font-family: Lato, sans-serif;
+    color: #282a30;
+    font-size: 18px;
+    text-decoration: none;
+}
+  
+  .link-button {
+    cursor: pointer;
+  }
+  
+  .link.float-right:hover {
+    border-color: #fff;
+  }
+  .dialog.signup {
+      overflow-y: scroll;
+  }
+  
+  .popup-close .close-popup{
+    color:#2a262b;text-decoration:none;
+  }
+  
+@media (max-width: 479px){
+    .signup-section.mob-port .comment-staff-photo {
+        width: 100%;float:none;
+    }
+    .signup-section.mob-port .comment-staff-photo {
+        margin-left: 0px;
+    }  
+  .dialog.signup {
+      overflow-y: scroll;
+  }
+  .comment-staff-photo {
+       float: none;
+  }  
+  
+}
+  
+@media (max-width: 767px){
+  
+  .footer-area {
+    clear: both;
+  }
+  
+  .villa-landing .callus-div {
+      display: block;
+
+  }  
+  
+
+}  
