@@ -32,6 +32,15 @@
 							'position':$(this).data('position'),
 							'categories':$(this).data('categories'),
 						});
+						
+						window.dataLayer.push({
+							'event' : 'GAEvent',
+							'eventCategory' : 'portal-card',
+							'eventAction' : 'interacted with',
+							'eventLabel' : $(this).data('position'),
+							'eventValue' : undefined,
+							'eventNonInteractionHit' : false
+						});
 					});
 					
 				});
@@ -42,13 +51,6 @@
 	
 		localStorage.setItem('govar','+1'); 
 	 
-		//hide all elements while loading
-		$('.mainlist-left').toggle();
-		$('.mainlist-right').toggle();
-		$('.footer-area').toggle();
-		$('.footer-bar').toggle();
-		$('.onboarding-header').toggle();
-		
         var location_id = getParam('locationId');
 		var budget = getParam('weeklyBudget');
 		var guests = getParam('guests');
@@ -111,7 +113,6 @@
 		if(!getParam('locationId')){
 		   location_id = 4945;
 		}	   
-		
      
 		$.ajax({
 			url: 'http://www.rentvillas.com/api/search',
