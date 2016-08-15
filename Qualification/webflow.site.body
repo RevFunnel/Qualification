@@ -1,7 +1,15 @@
-
-
 <script type="text/javascript">  
-	var allcomments = ''; 
+	//polyfill for json support for all browsers
+	if(!(window.JSON && window.JSON.parse))
+	{
+		(function() {
+		  function g(a){var b=typeof a;if("object"==b)if(a){if(a instanceof Array)return"array";if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if("[object Window]"==c)return"object";if("[object Array]"==c||"number"==typeof a.length&&"undefined"!=typeof a.splice&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("splice"))return"array";if("[object Function]"==c||"undefined"!=typeof a.call&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("call"))return"function"}else return"null";
+		  else if("function"==b&&"undefined"==typeof a.call)return"object";return b};function h(a){a=""+a;if(/^\s*$/.test(a)?0:/^[\],:{}\s\u2028\u2029]*$/.test(a.replace(/\\["\\\/bfnrtu]/g,"@").replace(/"[^"\\\n\r\u2028\u2029\x00-\x08\x10-\x1f\x80-\x9f]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:[\s\u2028\u2029]*\[)+/g,"")))try{return eval("("+a+")")}catch(b){}throw Error("Invalid JSON string: "+a);}function i(a,b){var c=[];j(new k(b),a,c);return c.join("")}function k(a){this.a=a}
+		  function j(a,b,c){switch(typeof b){case "string":l(b,c);break;case "number":c.push(isFinite(b)&&!isNaN(b)?b:"null");break;case "boolean":c.push(b);break;case "undefined":c.push("null");break;case "object":if(null==b){c.push("null");break}if("array"==g(b)){var f=b.length;c.push("[");for(var d="",e=0;e<f;e++)c.push(d),d=b[e],j(a,a.a?a.a.call(b,""+e,d):d,c),d=",";c.push("]");break}c.push("{");f="";for(e in b)Object.prototype.hasOwnProperty.call(b,e)&&(d=b[e],"function"!=typeof d&&(c.push(f),l(e,c),c.push(":"),
+			j(a,a.a?a.a.call(b,e,d):d,c),f=","));c.push("}");break;case "function":break;default:throw Error("Unknown type: "+typeof b);}}var m={'"':'\\"',"\\":"\\\\","/":"\\/","\u0008":"\\b","\u000c":"\\f","\n":"\\n","\r":"\\r","\t":"\\t","\x0B":"\\u000b"},n=/\uffff/.test("\uffff")?/[\\\"\x00-\x1f\x7f-\uffff]/g:/[\\\"\x00-\x1f\x7f-\xff]/g;
+		  function l(a,b){b.push('"',a.replace(n,function(a){if(a in m)return m[a];var b=a.charCodeAt(0),d="\\u";16>b?d+="000":256>b?d+="00":4096>b&&(d+="0");return m[a]=d+b.toString(16)}),'"')};window.JSON||(window.JSON={});"function"!==typeof window.JSON.stringify&&(window.JSON.stringify=i);"function"!==typeof window.JSON.parse&&(window.JSON.parse=h);
+		})();
+	}	
 	
 	$.noConflict();
   
@@ -9,13 +17,13 @@
 
 		//is visitor returning?
 		if (!!$.cookie('rv_user_id')) {
-			//yes, has cookie, so check if the user signed up already
 			
 			if(localStorage.getItem('signed_up')){
+				
 				//yes, so boot intercom for user
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
-					user_id: $.cookie('rv_user_id')
+					user_id: window.gaClientId
 				});
 			}
 			
@@ -73,7 +81,11 @@
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_referrer")
 				.attr('value', localStorage.getItem('session_referrer'))
-				.appendTo('form');					
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "ga_ClientId")
+				.attr('value', window.gaClientId)
+				.appendTo('form');				
 		});
 		
 		setHeight();
@@ -106,36 +118,50 @@
 
 		//The sign up form 
 		$( "#wf-form-emailSignupForm" ).submit(function( event ) {
-            $('.signup-section').fadeOut('slow');    
-            localStorage.setItem('signed_up','yes');  
+			if (!$("#wf-form-emailSignupForm")[0].checkValidity || $("#wf-form-emailSignupForm")[0].checkValidity()) {
+				/* submit the form */
+				$('.signup-section').fadeOut('slow');    
           
-			//trigger sign-up conversion for VWO
-			window._vis_opt_queue = window._vis_opt_queue || [];
-			window._vis_opt_queue.push(function() {_vis_opt_register_conversion(1,3);});
-		  
-			//trigger gtm
-			dataLayer.push({
-				'event' : 'GAEvent',
-				'eventCategory' : 'sign-up form',
-				'eventAction' : 'submitted',
-				'eventLabel' : window.location.href,
-				'eventValue' : undefined,
-				'eventNonInteractionHit' : false
-			});
-		  
-			var date_time = Math.round(new Date().getTime()/1000);
+				localStorage.setItem('signed_up','yes'); 
+				
+				//trigger sign-up conversion for VWO
+				window._vis_opt_queue = window._vis_opt_queue || [];
+				window._vis_opt_queue.push(function() {_vis_opt_register_conversion(1,3);});
+			  
+				//trigger gtm
+				window.dataLayer.push({
+					'event' : 'GAEvent',
+					'eventCategory' : 'sign-up form',
+					'eventAction' : 'submitted',
+					'eventLabel' : window.location.href,
+					'eventValue' : undefined,
+					'eventNonInteractionHit' : false
+				});
+			  
+				var sname = $( "#wf-form-emailSignupForm #name" ).val();
+				var semail = $( "#wf-form-emailSignupForm #email" ).val(); 
+				var uniqueId = $.cookie('rv_user_id');
 
-			var sname = $( "#wf-form-emailSignupForm #name" ).val();
-			var semail = $( "#wf-form-emailSignupForm #email" ).val();          
-         
-			//boot intercom
-			window.Intercom("boot", {
-				app_id: "tx9uxfb3",
-				name: sname, 
-				email: semail,
-				created_at: date_time,
-				user_id: uniqueId
-			});
+				//persist for later
+				var c = JSON.stringify({
+					'first_name':sname,
+					'email':semail,
+					'visitorId':uniqueId
+				});
+				$.cookie('rv_user', c , { expires: 1, path: '/',  domain: '.rentvillas.com' }); 
+				localStorage.setItem('rv_user',c);  
+				
+				//boot intercom
+				window.Intercom("boot", {
+					app_id: "tx9uxfb3",
+					name: sname, 
+					email: semail,
+					user_id: window.gaClientId
+				});
+			}
+			else {
+				return false;
+			}
         }); 
 		
 		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
@@ -273,7 +299,7 @@
 	 * @param {Object} productObj An object representing a product.
 	 */
 	function pushClickToDataLayer(productObj) {
-	  dataLayer.push({
+	  window.dataLayer.push({
 		'event': 'productClick',
 		'ecommerce': {
 		  'click': {
@@ -304,7 +330,8 @@
 			impressions.push(getEcommerceImpressionForItem(item, i, lnum));
 		});
 
-		dataLayer.push({
+		window.dataLayer.push({
+		  'event': 'productImpression',
 		  'ecommerce': {
 			'impressions': impressions
 		  }
@@ -354,7 +381,7 @@
 	  var s = localStorage.getItem('signed_up');
 	  if(!s){
 		  jQuery('.signup-section').fadeIn('slow'); 
-		  dataLayer.push({
+		  window.dataLayer.push({
 				'event' : 'GAEvent',
 				'eventCategory' : 'sign-up form',
 				'eventAction' : 'viewed',
@@ -409,7 +436,10 @@
   
 
 	function setHeight() {
-	   var vph = $(window).height();vph =  vph - 35; var windowHeight = vph + 'px';
+		var vph = $(window).height();
+		vph =  vph - 35; 
+		var windowHeight = vph + 'px';
+		$('#hero-banner-section').css('height', windowHeight);
 		$('.share-recomm.dialog').css('height', windowHeight);
 		if(Webflow.isMobile()){
 		   $('.signup.dialog').css('height', windowHeight);
@@ -623,11 +653,16 @@
 		  
 			return retdata;
 	}
-  
-
-  
-
 </script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="//clientproject.in/rent-villas/xhtml/grid/pinterest_grid.js"></script>
+<script type="text/javascript" src="//clientproject.in/rent-villas/xhtml/js/mailcheck.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
 
 
 

@@ -9,8 +9,7 @@
       if(localStorage.getItem('banner_image') && !Webflow.isMobile()){     
          var banner_image = localStorage.getItem('banner_image');       
          var imgcode = 'url('+banner_image+')';       
-        // $('#full').css('background-image','url(img/1.jpg)');
-         $('#hero-banner-sec').css('background-image',imgcode);
+         $('#hero-banner-section').css('background-image',imgcode);
        }
     
        var qstr = '';
@@ -40,11 +39,6 @@
         }else{
             $('#pageVariant').remove();
         }
-      
-        if($.cookie('rv_user_id') !== 'undefined'){          
-          $.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
-        }
-        $('#rv_anonymous_id').val($.cookie('rv_user_id'));
       
       
       function submitForm(){

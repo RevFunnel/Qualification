@@ -1,16 +1,14 @@
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
-<script defer src="//cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.js"></script>
-<script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script defer src="//clientproject.in/rent-villas/xhtml/grid/pinterest_grid.js"></script>
-<script defer src="//clientproject.in/rent-villas/xhtml/js/mailcheck.min.js"></script>
-<script defer src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
-<script defer type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script>
+    (function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+    c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+    c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+    _.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+    (window,document,"script","57ad5fb98e52201709001563");
+</script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.css">
 
 <style type="text/css">
-  
 .email-link {
     color: #ff9600;
 } 
@@ -232,7 +230,17 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
 <!-- End Visual Website Optimizer Asynchronous Code -->
 <script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/tx9uxfb3';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>
 <script> 
-    webshim.activeLang('en');
-    webshim.polyfill('forms');
-    webshim.cfg.no$Switch = true;
+	jQuery.noConflict();
+	(function($){
+		var hash = location.hash.replace('#', '');
+		
+		//	$.webshims.debug = "noCombo";
+		$(window).load(function(){
+			$.webshims.polyfill('forms');
+		});
+		if(hash.indexOf('noConflictExtreme') != -1){
+			webshims.cfg.no$Switch = true;
+			jQuery.noConflict(true);
+		}
+	})(jQuery);
 </script>
