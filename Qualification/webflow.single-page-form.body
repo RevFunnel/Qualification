@@ -109,7 +109,7 @@
 			});
 		});
       
-      $('.submit-button').on('click',function(){ 
+      $('#wf-form-Start_Single_Page_Form-2 > a').on('click',function(){ 
           //if($('#wf-form-Start_Single_Page_Form-2').valid()){
                submitSinglePageForm(); 
           //}                   

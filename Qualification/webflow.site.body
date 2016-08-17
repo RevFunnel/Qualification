@@ -1,4 +1,6 @@
 <script type="text/javascript">  
+	var Qualification = Qualification || {};
+
 	//polyfill json support used in parsing to and from storage
 	if(!(window.JSON && window.JSON.parse))
 	{
@@ -25,28 +27,28 @@
 	
     $(document).ready(function($){ 
 	
-		var hash = location.hash.replace('#', '');
-		
-		webshim.setOptions('forms', {
-			//set lazyCustomMessages to true
-			lazyCustomMessages: true,
-			//show custom styleable validation bubble
-			replaceValidationUI: true
-		});
-		
-		//	$.webshims.debug = "noCombo";
 		$(window).load(function(){
 			$.webshims.polyfill('forms');
 		});
-		if(hash.indexOf('noConflictExtreme') != -1){
-			webshims.cfg.no$Switch = true;
-			jQuery.noConflict(true);
-		}
 
+		//a test of localStorage to determine if we use memorystorage instead
+		Qualification.DB;
+		try {
+			var x = 'test_localstorage_available_' + Date.now();
+			localStorage.setItem(x, x);
+			var y = localStorage.getItem(x);
+			localStorage.removeItem(x);
+			if (x !== y) {throw new Error();}
+			Qualification.DB = localStorage;
+		}
+		catch(e) {
+			Qualification.DB = new MemoryStorage('qualification');
+		}
+		
 		//is visitor returning?
 		if (!!$.cookie('rv_user_id')) {
 			
-			if(localStorage.getItem('signed_up')){
+			if(Qualification.DB.getItem('signed_up')){
 				
 				//yes, so boot intercom for user
 				window.Intercom("boot", {
@@ -63,9 +65,10 @@
 			});	
 			$.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
 			
+			
 			//and log our referrer and url in browser storage
-			localStorage.setItem('session_start', window.location.href); 
-			localStorage.setItem('session_referrer', document.referrer); 
+			Qualification.DB.setItem('session_start', window.location.href); 
+			Qualification.DB.setItem('session_referrer', document.referrer); 
 		}
 
 		//add visitor details to any forms on the page
@@ -104,11 +107,11 @@
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_url")
-				.attr('value', localStorage.getItem('session_url'))
+				.attr('value', Qualification.DB.getItem('session_url'))
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_referrer")
-				.attr('value', localStorage.getItem('session_referrer'))
+				.attr('value', Qualification.DB.getItem('session_referrer'))
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "ga_ClientId")
@@ -123,13 +126,13 @@
 		});        
         
 		//prevent scrolling when the sign up form is showing
-		$(".signup.wel-sec").mouseenter(function(){
+/* 		$(".signup.wel-sec").mouseenter(function(){
 			$(window).bind("scroll", function(e){
 				e.preventDefault();
 			}); 
 		});        
 
-		Scrollbar.initAll();
+		Scrollbar.initAll(); */
 		
 		
 		//Click on change answer
@@ -150,7 +153,7 @@
 				/* submit the form */
 				$('.signup-section').fadeOut('slow');    
           
-				localStorage.setItem('signed_up','yes'); 
+				Qualification.DB.setItem('signed_up','yes'); 
 				
 				//trigger sign-up conversion for VWO
 				window._vis_opt_queue = window._vis_opt_queue || [];
@@ -177,7 +180,7 @@
 					'visitorId':uniqueId
 				});
 				$.cookie('rv_user', c , { expires: 1, path: '/',  domain: '.rentvillas.com' }); 
-				localStorage.setItem('rv_user',c);  
+				Qualification.DB.setItem('rv_user',c);  
 				
 				//boot intercom
 				window.Intercom("boot", {
@@ -250,15 +253,13 @@
 </script>
 
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/6.3.4/smooth-scrollbar.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script type="text/javascript" src="//clientproject.in/rent-villas/xhtml/grid/pinterest_grid.js"></script>
-<script type="text/javascript" src="//clientproject.in/rent-villas/xhtml/js/mailcheck.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js"></script>
+<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
+<script src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
 
 
 

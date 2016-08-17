@@ -94,7 +94,7 @@
   	color: #000000;
   }
   
-.new-banner-right .select{
+form .select{
   appearance:none;
   -moz-appearance:none; 
   -webkit-appearance:none;   
