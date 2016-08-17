@@ -100,7 +100,7 @@ form .select{
   -webkit-appearance:none;   
 }
   
-.lp2-submit-btn {
+.btn.form {
     cursor: pointer;
 }  
   
