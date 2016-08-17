@@ -100,7 +100,7 @@ form .select{
   -webkit-appearance:none;   
 }
   
-.btn.form {
+.btn:hover {
     cursor: pointer;
 }  
   
