@@ -10,6 +10,28 @@
 			'eventNonInteractionHit' : false
 		});
 
+		//build the text title for the portal
+		var title = '';
+        if(getParam('Year') && getParam('seg')){
+          mainhead = 'Your '+guestTravelYear+' Trip to '+segmentName;
+        }else{
+			if(getParam('seg')){
+				mainhead = 'Your Trip to '+segmentName;
+			}
+		}
+		
+		//persist form answers and input type
+		Qualification.Answers = [];
+		$("input[type!='hidden'], select").filter(':input').each(function(){
+			Qualification.Answers.push({
+				'id' : this.id,
+				'name' : this.name,
+				'value' : this.value,
+				'type' : this.type || this.tagName.toLowerCase()
+			});
+			Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers));
+		});
+		
 		var qstr = $( "input[type!='hidden'], select" ).serialize() + '&segId='+Qualification.Segment.ReferenceCode+ '&title='+Qualification.Segment.Name;		
 		$( "#wf-form-Start_Single_Page_Form-2" ).attr("data-redirect", qstr);
 		$('.single-page-form-submit').trigger('click'); 
@@ -38,6 +60,17 @@
       });         
       
       populate_form_fields(jQuery);
+	  
+	  //now set values based on persisted answers if we have them
+	  if ('Answers' in Qualification){
+		  $.each(Qualification.Answers, function(i, value){
+			  if (value.type === 'radio') {
+				$("#" + value.id).prop('checked', true);   
+			  } else{
+				$("#" + value.id).val(value.value).change();  
+			  }
+		  });
+	  }
       
     });
 

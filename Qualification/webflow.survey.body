@@ -2,38 +2,15 @@
     jQuery(document).ready(function($){
       var govar = '-1';
       if(DB.getItem('govar')){
-      var govar = DB.getItem('govar');
+		var govar = DB.getItem('govar');
       }
       
       DB.setItem('govar','-1'); 
-      if(DB.getItem('banner_image') && !Webflow.isMobile()){     
-         var banner_image = DB.getItem('banner_image');       
-         var imgcode = 'url('+banner_image+')';       
+      if('HeroImage' in Qualification.Segment && !Webflow.isMobile()){     
+         var imgcode = 'url('+ Qualification.Segment.HeroImage +')';       
          $('#hero-banner-section').css('background-image',imgcode);
        }
     
-       var qstr = '';
-       //  var qstr = window.location.href.slice(window.location.href.indexOf('?') + 1);
-        $('#area').val(getParam('area'));
-        $('#Region').val(getParam('area'));
-        $('#rvse').val(getParam('rvse'));
-        $('#rvcp').val(getParam('rvcp'));
-        $('#rvkw').val(getParam('rvkw'));
-        $('#kwmt').val(getParam('kwmt'));
-        $('#kw').val(getParam('kw'));
-        $('#MatchType').val(getParam('MatchType'));
-        $('#AdID').val(getParam('AdID'));
-        $('#gclid').val(getParam('gclid'));
-        $('#location').val(getParam('location'));
-        $('#locationId').val(getParam('locationId'));
-        
-        var areaval= $('#area').val();
-        var locationval= $('#location').val();
-        var location_id= $('#locationId').val();
-        
-        qstr += 'area='+ areaval +'&location='+locationval + '&locationId='+location_id;
-
-      
       function submitForm(){
              var formitems = $("form#wf-form-Recommendation-Form :input:checked").map(function(index, elm) {
                   return {name: elm.name, type:elm.type, value: $(elm).val()};

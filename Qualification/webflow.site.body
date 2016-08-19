@@ -32,17 +32,12 @@
 		});
 
 		//setup our storage (localStorage or memoryStorage)
-		Qualification.DB;
-		try {
-			var x = 'test_localstorage_available_' + Date.now();
-			localStorage.setItem(x, x);
-			var y = localStorage.getItem(x);
-			localStorage.removeItem(x);
-			if (x !== y) {throw new Error();}
-			Qualification.DB = localStorage;
-		}
-		catch(e) {
-			Qualification.DB = new MemoryStorage('qualification');
+		Qualification.SetupStorage();
+		
+		//do we have existing answers?
+		var answers = window.JSON.parse(Qualification.DB.getItem('qualification.answers'));
+		if (answers){
+			Qualification.Answers = answers;
 		}
 		
 		Qualification.Session = sessionStorage;
@@ -196,14 +191,15 @@
 				});
 			  
 				//persist user details
-				Qualification.User.first_name = $( "#wf-form-emailSignupForm #name" ).val();
+				Qualification.User.first_name = $("#wf-form-emailSignupForm #name").val().split(' ').slice(0, -1).join(' ');
+				Qualification.User.last_name = $("#wf-form-emailSignupForm #name").val().split(' ').slice(-1).join(' ');
 				Qualification.User.email = $( "#wf-form-emailSignupForm #email" ).val();
 				Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
 				
 				//boot intercom
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
-					name: Qualification.User.first_name, 
+					name: $("#wf-form-emailSignupForm #name").val(), 
 					email: Qualification.User.email,
 					user_id: Qualification.User.visitorId
 				});
