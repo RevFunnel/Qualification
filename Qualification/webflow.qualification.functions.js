@@ -207,6 +207,23 @@ function getAllMonths(start, end) {
 	return a;
 }
 
+//our app constructor
+function Qualification(){
+	(window.onpopstate = function () {
+		var match,
+			pl     = /@@@/g,  // Regex for replacing addition symbol with a space, you could replace @@@ with a + to remove those from values
+			search = /([^&=]+)=?([^&]*)/g,
+			decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+			query  = window.location.search.substring(1);
+
+		this.UrlParams = {};
+		while (match = search.exec(query))
+		   this.UrlParams[decode(match[1])] = decode(match[2]);
+	})();
+	
+	Qualification.SetupStorage();
+}
+
 Qualification.SetupStorage = function(){
 	Qualification.DB;
 	try {
