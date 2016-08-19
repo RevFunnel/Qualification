@@ -2,7 +2,7 @@
 	
     $(document).ready(function($){ 
 	
-		Qualification = Qualification || new QualificationApp();
+		Qualification = new QualificationApp();
 
 		$(window).load(function(){
 			$.webshims.polyfill('forms');
