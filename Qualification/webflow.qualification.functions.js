@@ -247,10 +247,10 @@ function QualificationApp(){
 		});
 	});  
 	
-	Qualification.SetupStorage();
+	SetupStorage();
 }
 
-Qualification.SetupStorage = function(){
+function SetupStorage(){
 	Qualification.DB;
 	try {
 		var x = 'test_localstorage_available_' + Date.now();
