@@ -208,7 +208,7 @@ function getAllMonths(start, end) {
 }
 
 //our app constructor
-function Qualification(){
+function QualificationApp(){
 	(window.onpopstate = function () {
 		var match,
 			pl     = /@@@/g,  // Regex for replacing addition symbol with a space, you could replace @@@ with a + to remove those from values
@@ -242,7 +242,6 @@ function Qualification(){
 			 gridifyColumn($('#recommend-list'));
 			}
 		});
-
 	});  
 	
 	Qualification.SetupStorage();

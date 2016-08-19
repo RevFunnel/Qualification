@@ -2,10 +2,14 @@
 	
     $(document).ready(function($){ 
 	
+		Qualification = Qualification || new QualificationApp();
+
 		$(window).load(function(){
 			$.webshims.polyfill('forms');
 		});
 
+		Qualification.Segment = window.Segment;
+		
 		//do we have existing answers?
 		var answers = window.JSON.parse(Qualification.DB.getItem('qualification.answers'));
 		if (answers){
@@ -246,7 +250,7 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js?v=1"></script>
+<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js?v=2"></script>
 <script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
 <script type="text/javascript" src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
 
