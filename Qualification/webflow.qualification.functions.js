@@ -209,6 +209,9 @@ function getAllMonths(start, end) {
 
 //our app constructor
 function QualificationApp(){
+	
+	Qualification = this;
+	
 	(window.onpopstate = function () {
 		var match,
 			pl     = /@@@/g,  // Regex for replacing addition symbol with a space, you could replace @@@ with a + to remove those from values
@@ -244,10 +247,10 @@ function QualificationApp(){
 		});
 	});  
 	
-	Qualification.SetupStorage();
+	this.SetupStorage();
 }
 
-Qualification.SetupStorage = function(){
+QualificationApp.SetupStorage = function(){
 	Qualification.DB;
 	try {
 		var x = 'test_localstorage_available_' + Date.now();
