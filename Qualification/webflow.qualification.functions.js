@@ -158,17 +158,17 @@ function gridifyColumn(obj){
 }
 
 function showSignupform(){
-  var s = DB.getItem('signed_up');
-  if(!s){
-	  jQuery('.signup-section').fadeIn('slow'); 
-	  window.dataLayer.push({
+	var s = Qualification.DB.getItem('signed_up');
+	if(!s){
+		jQuery('.signup-section').fadeIn('slow'); 
+		window.dataLayer.push({
 			'event' : 'GAEvent',
 			'eventCategory' : 'sign-up form',
 			'eventAction' : 'viewed',
 			'eventLabel' : window.location.href,
 			'eventValue' : undefined,
 			'eventNonInteractionHit' : true
-		});
+	});
   } 
 } 
 
@@ -248,6 +248,18 @@ function QualificationApp(){
 	});  
 	
 	SetupStorage();
+	
+	//Load question data
+	Qualification.Questions = [];
+	Qualification.Questions.push({
+		'id' : 'who_is_travelling',
+		'options' : [
+						{text:"Please choose...", val:"0"},
+						{text:"Group with children", val:"1"},
+						{text:"Group of adults", val:"2"},
+						{text:"Just two of us", val:"3"}
+					]
+	});
 }
 
 function SetupStorage(){
@@ -287,18 +299,12 @@ function setHeight() {
 // Single Page Form: Populate single page forms drop downs
   
 function populate_who_is_travelling($){
- var who_is_travelling = 
-   [
-	 {text:"Group with children", val:"1"},
-	 {text:"Group of adults", val:"2"},
-	 {text:"Just two of us", val:"3"}
-   ];      
+  var el = $('#who_is_travelling');
+  var options = $.grep(Qualification.Questions, function(e){return e.id == "who_is_travelling"})[0].options;
   
-  var sobj = $('#who_is_travelling');
-  $(sobj).empty();
-  $(sobj).append($('<option>').text("Please choose...").attr('value', ''));
-  $.each(who_is_travelling, function(i, obj){
-	$(sobj).append($('<option>').text(obj.text).attr('value', obj.val));
+  $(el).empty();
+  $.each(options, function(i, obj){
+	$(el).append($('<option>').text(obj.text).attr('value', obj.val));
   });        
   
 }

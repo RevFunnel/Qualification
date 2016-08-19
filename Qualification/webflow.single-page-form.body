@@ -10,25 +10,17 @@
 			'eventNonInteractionHit' : false
 		});
 
-		//build the text title for the portal
-		var title = '';
-        if(getParam('Year') && getParam('seg')){
-          mainhead = 'Your '+guestTravelYear+' Trip to '+segmentName;
-        }else{
-			if(getParam('seg')){
-				mainhead = 'Your Trip to '+segmentName;
-			}
-		}
-		
 		//persist form answers and input type
 		Qualification.Answers = [];
 		$("input[type!='hidden'], select").filter(':input').each(function(){
-			Qualification.Answers.push({
+			var answer = {
 				'id' : this.id,
 				'name' : this.name,
 				'value' : this.value,
 				'type' : this.type || this.tagName.toLowerCase()
-			});
+			}
+			if (this.type === "select-one") answer.selectedText = $("#" + this.id).children("option").is("selected").text(‌​);
+			Qualification.Answers.push(answer);
 			Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers));
 		});
 		
