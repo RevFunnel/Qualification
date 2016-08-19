@@ -158,7 +158,7 @@ function gridifyColumn(obj){
 }
 
 function showSignupform(){
-  var s = localStorage.getItem('signed_up');
+  var s = DB.getItem('signed_up');
   if(!s){
 	  jQuery('.signup-section').fadeIn('slow'); 
 	  window.dataLayer.push({

@@ -1,59 +1,6 @@
 <script type="text/javascript">
 	function submitSinglePageForm(){			 
-		var qstr1 = '';
-		var areaval= $('#area').val();
-		var locationval= $('#location').val();
-		var location_id= $('#locationId').val();	  
-
-		qstr1 += 'area='+ areaval +'&location='+locationval + '&locationId='+location_id;
-		var formfields = 
-		[
-		 {field:"who_is_travelling", urlkey:"groupType", type : 'select'},
-		 {field:"how_many_people_are_traveling", urlkey:"guests", type : 'select'},
-		 {field:"what_is_your_max_weekly_budget", urlkey:"weeklyBudget", type : 'select'},
-		 {field:"when_do_you_plan_to_travel", urlkey:"year_month", type : 'select'},
-		 {field:"how_long_will_you_stay", urlkey:"howLong", type : 'select'},
-		 {field:"is_it_your_first_time_renting", urlkey:"firstTimeRenting", type : 'radio'}
-		]; 			   
-
-		$.each(formfields, function(i, obj){
-			var fobj = $('#' + obj.field);
-			var name = obj.urlkey;
-			var value = '';
-				
-			if(obj.type == 'select'){
-				if(obj.urlkey == 'groupType' && $(fobj).val() != 0){
-					value = $('#' + obj.field + " option[value='" + $(fobj).val() + "']").text();
-				}
-				else {
-					value = $(fobj).val();
-				}
-			}else{
-			  value = $('input[name=' + obj.field + ']:checked', '#wf-form-Landing-Form').val()
-			}	
-
-			if(obj.urlkey != 'year_month'){
-			  if(typeof value !== "undefined" && value != 0){
-				qstr1 += '&'+ name + '=' + value;
-			  }
-			}else{
-				var monthNames = ["January", "February", "March", "April", "May", "June",
-				  "July", "August", "September", "October", "November", "December"
-				];				  
-				  var objDate = new Date(value);
-				  var month = objDate.getMonth(); month = monthNames[month];
-				  var year = objDate.getFullYear();
-				  if(typeof month !== "undefined"){
-					  qstr1 += '&Month=' + month;
-				  }
-				  if(!isNaN(year)){
-					  qstr1 += '&Year=' + year;
-				  }
-			}						
-		});  
-
-		qstr = qstr1;
-		
+	
 		dataLayer.push({
 			'event' : 'GAEvent',
 			'eventCategory' : 'single-page-form',
@@ -62,7 +9,8 @@
 			'eventValue' : undefined,
 			'eventNonInteractionHit' : false
 		});
-		
+
+		var qstr = $( "input[type!='hidden'], select" ).serialize() + '&segId='+Qualification.Segment.ReferenceCode+ '&title='+Qualification.Segment.Name;		
 		$( "#wf-form-Start_Single_Page_Form-2" ).attr("data-redirect", qstr);
 		$('.single-page-form-submit').trigger('click'); 
 		
@@ -71,33 +19,7 @@
 
     jQuery(document).ready(function($){
        
-		var qstr = '';
-		//  var qstr = window.location.href.slice(window.location.href.indexOf('?') + 1);
-		$('#area').val(getParam('area'));
-		$('#Region').val(getParam('area'));
-		$('#rvse').val(getParam('rvse'));
-		$('#rvcp').val(getParam('rvcp'));
-		$('#rvkw').val(getParam('rvkw'));
-		$('#kwmt').val(getParam('kwmt'));
-		$('#kw').val(getParam('kw'));
-		$('#MatchType').val(getParam('MatchType'));
-		$('#AdID').val(getParam('AdID'));
-		$('#gclid').val(getParam('gclid'));
-
-		var areaval= $('#area').val();
-		var locationval= $('#location').val();
-		var location_id= $('#locationId').val();
-
-		qstr += 'area='+ areaval +'&location='+locationval + '&locationId='+location_id;
-
-		if (typeof vwo_variation !== 'undefined') {
-			$('#pageVariant').val(vwo_variation);
-		}else{
-			$('#pageVariant').remove();
-		}
-
-		$('#user_id').val($.cookie('rv_user_id'));
-      
+		//tracks form interaction
 		$('#wf-form-Start_Single_Page_Form-2').on('click',function(e){
 			dataLayer.push({
 				'event' : 'GAEvent',

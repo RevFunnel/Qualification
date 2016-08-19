@@ -25,7 +25,7 @@
 					
 					//any clicks on a figure should create an ecommerce click object
 					$('figure').on('click',function(e){
-						
+
 						pushClickToDataLayer({
 							'productId':$(this).data('productid'),
 							'name':$(this).data('name'),
@@ -51,21 +51,16 @@
 	
 		Qualification.DB.setItem('govar','+1'); 
 	 
-        var location_id = getParam('locationId');
-		var budget = getParam('weeklyBudget');
-		var guests = getParam('guests');
-		var guestTravelYear = getParam('Year');
-		var guestTravelMonth = getParam('Month');
-		var groupType = getParam('groupType');    
-		var howLong = getParam('howLong');    
-		var location = getParam('location');    
-      
+        var segmentId = getParam('segId');
+		var segmentName = getParam('seg');  
+		var segmentSlug = getParam('segslug');  			
+
         var mainhead = '';
-        if(getParam('Year') && getParam('location')){
-          mainhead = 'Your '+guestTravelYear+' Trip to '+location;
+        if(getParam('Year') && getParam('seg')){
+          mainhead = 'Your '+guestTravelYear+' Trip to '+segmentName;
         }else{
-			if(getParam('location')){
-				mainhead = 'Your Trip to '+location;
+			if(getParam('seg')){
+				mainhead = 'Your Trip to '+segmentName;
 			}
 		}
 	  
@@ -104,20 +99,20 @@
 		$('.text-muted.left-align').html(text_m); 
 
 		//set defaults
-		if(!getParam('weeklyBudget')){
+		if(!getParam('What-Is-Your-Max-Weekly-Budget')){
 		   budget = 0;
 		}
-		if(!getParam('guests')){
+		if(!getParam('How-Many-People-Are-Traveling')){
 		   guests = 0;
 		}
-		if(!getParam('locationId')){
-		   location_id = 4945;
+		if(!getParam('segId')){
+		   segmentId = 4945;
 		}	   
      
 		$.ajax({
 			url: 'http://www.rentvillas.com/api/search',
 			data: {
-					locationId : location_id,
+					locationId : segmentId,
 					budget : budget,
 					guests : guests,
 					travelMonth : (guestTravelMonth == '') ? 0 : moment().month(guestTravelMonth).format("M"),

@@ -31,7 +31,7 @@
 			$.webshims.polyfill('forms');
 		});
 
-		//a test of localStorage to determine if we use memorystorage instead
+		//setup our storage (localStorage or memoryStorage)
 		Qualification.DB;
 		try {
 			var x = 'test_localstorage_available_' + Date.now();
@@ -45,32 +45,63 @@
 			Qualification.DB = new MemoryStorage('qualification');
 		}
 		
+		Qualification.Session = sessionStorage;
+		
+		//persist segment data if we have it
+		if ('Segment' in Qualification)
+			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
+		
 		//is visitor returning?
-		if (!!$.cookie('rv_user_id')) {
+		var user = Qualification.DB.getItem('qualification.user');
+		if(user){
 			
-			if(Qualification.DB.getItem('signed_up')){
-				
-				//yes, so boot intercom for user
-				window.Intercom("boot", {
-					app_id: "tx9uxfb3",
-					user_id: window.gaClientId
-				});
+			Qualification.User = user;
+			
+			//yes, so boot intercom for user
+			window.Intercom("boot", {
+				app_id: "tx9uxfb3",
+				user_id: user.visitorId
+			});
+		
+			//store details of the visit in session storage
+			Qualification.Visit = window.JSON.parse(Qualification.Session.getItem('qualification.visit'));
+			if (Qualification.Visit === "undefined"){
+				Qualification.Visit = {
+					'session_url': window.location.href,
+					'session_referrer': document.referrer
+				}
+				Qualification.Session.setItem('qualification.visit', JSON.stringify(Qualification.Visit));
 			}
-			
+		
 		}else {
-			//no, so assign a visitorid and set cookie
+			//no, so assign a visitorid
 			var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 				var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 				return v.toString(16);
 			});	
-			$.cookie('rv_user_id', uniqueId , { expires: 7, path: '/',  domain: '.rentvillas.com' });
 			
+			Qualification.User = {
+				'visitorId':uniqueId,
+				'session_url': window.location.href,
+				'session_referrer': document.referrer
+			};
+			Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User));
 			
-			//and log our referrer and url in browser storage
-			Qualification.DB.setItem('session_start', window.location.href); 
-			Qualification.DB.setItem('session_referrer', document.referrer); 
+			Qualification.Visit = {
+				'session_url': window.location.href,
+				'session_referrer': document.referrer
+			}
+			Qualification.Session.setItem('qualification.visit', JSON.stringify(Qualification.Visit));
 		}
 
+		//add all query params to any forms on the page
+		for(var index in Qualification.UrlParams) {
+			$('<input />').attr('type', 'hidden')
+				.attr('name', index)
+				.attr('value', Qualification.UrlParams[index])
+				.appendTo('form');
+		}
+		
 		//add visitor details to any forms on the page
 		$.getJSON('//ip-api.com/json?callback=?', function(data) {
 			$('<input />').attr('type', 'hidden')
@@ -107,16 +138,13 @@
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_url")
-				.attr('value', Qualification.DB.getItem('session_url'))
+				.attr('value', Qualification.Visit.session_url)
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_referrer")
-				.attr('value', Qualification.DB.getItem('session_referrer'))
+				.attr('value', Qualification.Visit.session_referrer)
 				.appendTo('form');
-			$('<input />').attr('type', 'hidden')
-				.attr('name', "ga_ClientId")
-				.attr('value', window.gaClientId)
-				.appendTo('form');				
+						
 		});
 		
 		setHeight();
@@ -153,8 +181,6 @@
 				/* submit the form */
 				$('.signup-section').fadeOut('slow');    
           
-				Qualification.DB.setItem('signed_up','yes'); 
-				
 				//trigger sign-up conversion for VWO
 				window._vis_opt_queue = window._vis_opt_queue || [];
 				window._vis_opt_queue.push(function() {_vis_opt_register_conversion(1,3);});
@@ -169,25 +195,22 @@
 					'eventNonInteractionHit' : false
 				});
 			  
-				var sname = $( "#wf-form-emailSignupForm #name" ).val();
-				var semail = $( "#wf-form-emailSignupForm #email" ).val(); 
-				var uniqueId = $.cookie('rv_user_id');
-
-				//persist for later
-				var c = JSON.stringify({
-					'first_name':sname,
-					'email':semail,
-					'visitorId':uniqueId
-				});
-				$.cookie('rv_user', c , { expires: 1, path: '/',  domain: '.rentvillas.com' }); 
-				Qualification.DB.setItem('rv_user',c);  
+				//persist user details
+				Qualification.User.first_name = $( "#wf-form-emailSignupForm #name" ).val();
+				Qualification.User.email = $( "#wf-form-emailSignupForm #email" ).val();
+				Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
 				
 				//boot intercom
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
-					name: sname, 
-					email: semail,
-					user_id: window.gaClientId
+					name: Qualification.User.first_name, 
+					email: Qualification.User.email,
+					user_id: Qualification.User.visitorId
+				});
+				
+				dataLayer.push({
+					'userId' : Qualification.User.visitorId,
+					'event' : 'authentication'
 				});
 			}
 			else {
@@ -246,20 +269,18 @@
         
     });
 	
-	
 	//METHODS: recommendations 
-	
-	
 </script>
 
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js"></script>
-<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
-<script src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js"></script>
+<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
+<script type="text/javascript" src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
 
 
 
