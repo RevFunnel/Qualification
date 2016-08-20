@@ -287,7 +287,7 @@ function QualificationApp(){
 	$.each(dates, function(index, date) {
 		question.options.push({
 			'val': moment(date).format('MM/DD/YYYY'),
-			'text' : moment(obj).format('MMM YYYY')				
+			'text' : moment(date).format('MMM YYYY')				
 		});
 	});
 	
