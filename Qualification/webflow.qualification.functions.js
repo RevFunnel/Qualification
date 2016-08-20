@@ -260,6 +260,91 @@ function QualificationApp(){
 						{text:"Just two of us", val:"3"}
 					]
 	});
+
+	Qualification.Questions.push({
+		'id' : 'how_long_will_you_stay',
+		'options' : [
+		 {text:"less than a week", val:"1"},
+		 {text:"1 week", val:"7"},
+		 {text:"2 weeks", val:"14"},
+		 {text:"3 weeks", val:"21"},
+		 {text:"1 month or more", val:"30"},
+		]
+	});
+	
+	var question = {
+		'id' : 'when_do_you_plan_to_travel',
+		'options' : []
+	};
+	
+	var today = new Date(), 
+		start = new Date(today.getFullYear(), today.getMonth(), 1),
+		x = 36,
+		end = new Date();
+	
+	end.setMonth(start.getMonth() + x);
+	var dates = getAllMonths(start, end);
+	$.each(dates, function(index, date) {
+		question.options.push({
+			'val': moment(date).format('MM/DD/YYYY'),
+			'text' : moment(obj).format('MMM YYYY')				
+		});
+	}
+	
+	Qualification.Questions.push(question);
+	
+	var question = {
+		'id' : 'what_is_your_max_weekly_budget',
+		'options' : []
+	}; 	
+	
+	var s = 1000;
+	var e = 10000;
+	var prices = [];
+	while (s < e) {
+		prices.push(s);
+		s = s + 1000;
+	}
+
+	s = 10000;
+	e = 20000;
+	while (s < e) {
+	prices.push(s);
+	s = s + 2000;
+	}
+	prices.push(25000);
+	prices.push(35000);
+	prices.push(60000);
+	prices.push(80000);
+	
+	$.each(prices, function(index, price){
+		question.options.push({'val':s, 'text': '$' + numberWithCommas(s)});	
+	});
+	
+	Qualification.Questions.push(question);
+	
+	var question = {
+		'id' : 'how_many_people_are_traveling',
+		'options' : []
+	};
+	var s = 1;
+	var e = 18;
+	var a = [];
+	while (s < e) {
+	 a.push(s);
+	  s++;
+	}
+
+	s = 20;
+	e = 32;
+	while (s < e) {
+		a.push(s);
+		s = s + 2;
+	}  
+	$.each(a, function(index, number){
+		question.options.push({'val': number, 'text': number});	
+	});
+	Qualification.Questions.push(question);
 }
 
 function SetupStorage(){
@@ -297,118 +382,23 @@ function setHeight() {
 };
 
 // Single Page Form: Populate single page forms drop downs
-  
-function populate_who_is_travelling($){
-  var el = $('#who_is_travelling');
-  var options = $.grep(Qualification.Questions, function(e){return e.id == "who_is_travelling"})[0].options;
+function populate_select(fieldId){
+  var el = $('#' + fieldId);
+  var options = $.grep(Qualification.Questions, function(e){return e.id == fieldId})[0].options;
   
   $(el).empty();
   $.each(options, function(i, obj){
 	$(el).append($('<option>').text(obj.text).attr('value', obj.val));
   });        
-  
 }
-
-function populate_when_do_you_plan_to_travel($){
-	var today = new Date();
-	var start = new Date(today.getFullYear(), today.getMonth(), 1);
-	var x = 36;
-	var end = new Date();
-	end.setMonth(start.getMonth() + x);
-	var result = getAllMonths(start, end);
-
-	var sobj = $("#when_do_you_plan_to_travel");
-	$(sobj).empty();
-	$(sobj).append($('<option>').text("Please choose...").attr('value', ''));
-
-	$.each(result, function(i, obj) {
-	sobj.append($("<option />").val(moment(obj).format('MM/DD/YYYY')).html(moment(obj).format('MMM YYYY')));
-	});      
-}
-
-function populate_what_is_your_max_weekly_budget($){
-	var s = 1000;
-	var e = 10000;
-	var prices = [];
-	while (s < e) {
-	 prices.push(s);
-	  s = s + 1000;
-	}
-
-	s = 10000;
-	e = 20000;
-	while (s < e) {
-	prices.push(s);
-	s = s + 2000;
-	}
-	prices.push(25000);
-	prices.push(35000);
-	prices.push(60000);
-	prices.push(80000);
-
-	var sobj = $("#what_is_your_max_weekly_budget");
-	$(sobj).empty();
-	$(sobj).append($('<option>').text("Please choose...").attr('value', 0));	
-	  
-	$.each(prices, function(i, val) { 
-	  sobj.append($("<option />").val(val).html('$' + numberWithCommas(val)));
-	});		  
-
-}    
-
-
-function populate_how_many_people_are_traveling($){
-   
-	  var s = 1;
-	  var e = 18;
-	  var a = [];
-	  while (s < e) {
-		 a.push(s);
-		  s++;
-	  }
-
-	  s = 20;
-	  e = 32;
-	  while (s < e) {
-		a.push(s);
-		s = s + 2;
-	  }  
-
-	  var sobj = $("#how_many_people_are_traveling");
-	  $(sobj).empty();
-	  $(sobj).append($('<option>').text("Please choose...").attr('value', 0)); 
-
-	  $.each(a, function(i, val) { 
-		  sobj.append($("<option />").val(val).html(val));
-	  });   
-   
-}    
-
-function populate_how_long_will_you_stay($){
-
-	var numdays = 
-	   [
-		 {text:"less than a week", val:"1"},
-		 {text:"1 week", val:"7"},
-		 {text:"2 weeks", val:"14"},
-		 {text:"3 weeks", val:"21"},
-		 {text:"1 month or more", val:"30"},
-	   ];
-   
-	var sobj = $("#how_long_will_you_stay");
-	$(sobj).empty();
-	$(sobj).append($('<option>').text("Please choose...").attr('value', 0)); 
-	$.each(numdays, function(i, val) { 
-	  sobj.append($("<option />").val(val.val).html(val.text));
-	});
-}  
 
 function populate_form_fields($){
-	populate_who_is_travelling($);
-	populate_when_do_you_plan_to_travel($);
-	populate_what_is_your_max_weekly_budget($);   
-	populate_how_many_people_are_traveling($);
-	populate_how_long_will_you_stay($);
+	//TODO: get all form selects and loop over them
+	populate_select('who_is_travelling');
+	populate_select('when_do_you_plan_to_travel');
+	populate_select('what_is_your_max_weekly_budget');   
+	populate_select('how_many_people_are_traveling');
+	populate_select('how_long_will_you_stay');
 }
 
 //
