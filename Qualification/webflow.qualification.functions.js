@@ -289,7 +289,7 @@ function QualificationApp(){
 			'val': moment(date).format('MM/DD/YYYY'),
 			'text' : moment(obj).format('MMM YYYY')				
 		});
-	}
+	});
 	
 	Qualification.Questions.push(question);
 	
