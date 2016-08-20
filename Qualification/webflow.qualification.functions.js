@@ -310,7 +310,7 @@ function QualificationApp(){
 	e = 20000;
 	while (s < e) {
 	prices.push(s);
-	s = s + 2000;
+		s = s + 2000;
 	}
 	prices.push(25000);
 	prices.push(35000);
@@ -318,7 +318,7 @@ function QualificationApp(){
 	prices.push(80000);
 	
 	$.each(prices, function(index, price){
-		question.options.push({'val':s, 'text': '$' + numberWithCommas(s)});	
+		question.options.push({'val':price, 'text': '$' + numberWithCommas(price)});	
 	});
 	
 	Qualification.Questions.push(question);
