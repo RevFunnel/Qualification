@@ -254,7 +254,7 @@ function QualificationApp(){
 	Qualification.Questions.push({
 		'id' : 'who_is_travelling',
 		'options' : [
-						{text:"Please choose...", val:"0"},
+						
 						{text:"Group with children", val:"1"},
 						{text:"Group of adults", val:"2"},
 						{text:"Just two of us", val:"3"}
@@ -387,6 +387,7 @@ function populate_select(fieldId){
   var options = $.grep(Qualification.Questions, function(e){return e.id == fieldId})[0].options;
   
   $(el).empty();
+  $(el).append($('<option>').text("Please choose...").attr('value', 0));
   $.each(options, function(i, obj){
 	$(el).append($('<option>').text(obj.text).attr('value', obj.val));
   });        
