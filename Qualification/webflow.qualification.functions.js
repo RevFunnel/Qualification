@@ -158,8 +158,7 @@ function gridifyColumn(obj){
 }
 
 function showSignupform(){
-	var s = Qualification.DB.getItem('signed_up');
-	if(!s){
+	if('email' in Qualification.User){
 		jQuery('.signup-section').fadeIn('slow'); 
 		window.dataLayer.push({
 			'event' : 'GAEvent',

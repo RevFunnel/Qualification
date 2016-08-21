@@ -86,7 +86,7 @@
 		Qualification.Session = sessionStorage;
 		
 		//is visitor returning?
-		var user = Qualification.DB.getItem('qualification.user');
+		var user = window.JSON.parse(Qualification.DB.getItem('qualification.user'));
 		if(user){
 			
 			Qualification.User = user;

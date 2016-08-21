@@ -13,8 +13,7 @@
 			$('.nolist-loader').fadeOut('slow',function(){
 					$(this).remove();
 					$('.recommendations-header').toggle();
-					$('.share-btn-wrapper').toggle();
-					$('.footer-area').toggle();
+					//$('.share-btn-wrapper').toggle();
 					$('.footer-bar').toggle();
 					$('.onboarding-header').toggle();
 					$('#recommend-list').append(listd); 
