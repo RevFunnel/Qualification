@@ -219,9 +219,9 @@ function QualificationApp(){
 			decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
 			query  = window.location.search.substring(1);
 
-		this.UrlParams = {};
+		Qualification.UrlParams = {};
 		while (match = search.exec(query))
-		   this.UrlParams[decode(match[1])] = decode(match[2]);
+		   Qualification.UrlParams[decode(match[1])] = decode(match[2]);
 	})();
 	
 		//polyfill json support used in parsing to and from storage

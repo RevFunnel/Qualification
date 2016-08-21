@@ -11,18 +11,21 @@
 		});
 
 		//persist form answers and input type
-		Qualification.Answers = [];
+		Qualification.Answers = {};
 		$("input[type!='hidden'], select").filter(':input').each(function(){
 			var answer = {
 				'id' : this.id,
 				'name' : this.name,
 				'value' : this.value,
 				'type' : this.type || this.tagName.toLowerCase()
+			};
+			if (this.type === "select-one") {
+				answer.selectedText = $(this).find(":selected").text();
 			}
-			if (this.type === "select-one") answer.selectedText = $("#" + this.id).children("option").is("selected").text(‌​);
-			Qualification.Answers.push(answer);
-			Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers));
+			Qualification.Answers[this.id] = answer;
 		});
+		
+		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
 		
 		var qstr = $( "input[type!='hidden'], select" ).serialize() + '&segId='+Qualification.Segment.ReferenceCode+ '&title='+Qualification.Segment.Name;		
 		$( "#wf-form-Start_Single_Page_Form-2" ).attr("data-redirect", qstr);

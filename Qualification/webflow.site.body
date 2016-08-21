@@ -8,7 +8,53 @@
 			$.webshims.polyfill('forms');
 		});
 
-		Qualification.Segment = window.Segment;
+		var DateFormats = {
+				short: "DD MMMM - YYYY",
+				long: "dddd DD.MM.YYYY HH:mm",
+				year: "YYYY",
+				month: "MMMM",
+				monthYear: "MMM YYYY"
+			};
+			
+		// register helper to handle date formats in handlebar templates
+		Handlebars.registerHelper("formatDate", function(datetime, format) {
+		  if (moment) {
+			// can use other formats like 'lll' too
+			format = DateFormats[format] || format;
+			return moment(datetime).format(format);
+		  }
+		  else {
+			return datetime;
+		  }
+		});
+		
+		//add segments data if we have it
+		if ("segments" in window)
+		{			
+			Qualification.Segments = window.segments;
+		}
+		
+		//persist segment data if we have it
+		if ("Segment" in window)
+		{			
+			Qualification.Segment = window.Segment;
+			if (getParam('area')) Qualification.Segment.Title = getParam('area');
+		}
+		
+		
+		//if we don't have a segment defined, but we have one in the url
+		if (!'Segment' in Qualification && getParam('segId') && 'Segments' in Qualification){
+			Qualification.Segment = Qualification.Segments[getParam('segId')];
+		}
+		
+		if ('Segment' in Qualification){
+			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
+		}
+		else {
+			Qualification.Segment = window.JSON.parse(Qualification.DB.getItem('qualification.segment'));
+		}
+		
+		if (!'Segment' in Qualification) throw 'No segment defined either in url or local storage';
 		
 		//do we have existing answers?
 		var answers = window.JSON.parse(Qualification.DB.getItem('qualification.answers'));
@@ -17,10 +63,6 @@
 		}
 		
 		Qualification.Session = sessionStorage;
-		
-		//persist segment data if we have it
-		if ('Segment' in Qualification)
-			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
 		
 		//is visitor returning?
 		var user = Qualification.DB.getItem('qualification.user');

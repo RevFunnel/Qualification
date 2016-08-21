@@ -1,6 +1,4 @@
 
-
-
 <script type="text/javascript">
 
 	function OnSearchSuccess(searchResults) {   
@@ -14,8 +12,8 @@
 		setTimeout( function() {
 			$('.nolist-loader').fadeOut('slow',function(){
 					$(this).remove();
-					$('.mainlist-left').toggle();
-					$('.mainlist-right').toggle();
+					$('.recommendations-header').toggle();
+					$('.share-btn-wrapper').toggle();
 					$('.footer-area').toggle();
 					$('.footer-bar').toggle();
 					$('.onboarding-header').toggle();
@@ -50,73 +48,28 @@
     jQuery(document).ready(function($){ 
 	
 		Qualification.DB.setItem('govar','+1'); 
-	 
-        var segmentId = getParam('segId');
-		var segmentName = getParam('seg');  
-		var segmentSlug = getParam('segslug');  			
+		
+		// Grab the handlebar template script
+		var theTemplateScript = $("#title-template").html();
+		var theTemplate = Handlebars.compile(theTemplateScript);
+		var when = Qualification.Answers.when_do_you_plan_to_travel;
+		var title = theTemplate({'year': (when === 'undefined') ? when : when.selectedText, 'title': Qualification.Segment.Title});
+  
+		var theTemplateScript = $("#answers-template").html();
+		var theTemplate = Handlebars.compile(theTemplateScript);
+		var answers = theTemplate(Qualification.Answers);
+		
+		$('.page-head strong').text(title);
+		$('.text-muted.left-align').html(answers); 
 
-        var mainhead = '';
-        if(getParam('Year') && getParam('seg')){
-          mainhead = 'Your '+guestTravelYear+' Trip to '+segmentName;
-        }else{
-			if(getParam('seg')){
-				mainhead = 'Your Trip to '+segmentName;
-			}
-		}
-	  
-		var pricetext ='';
-		var text_m = '';
-	   
-		if(getParam('weeklyBudget') && parseInt(budget)> 0){
-		   pricetext = "<span class='highlight'>$" + budget + "</span> weekly budget"; 
-		}		   
-		var changeans = "<a href='#' onClick='history.go(-1);' class='text-muted'>[change my answers]</a>"; 
-
-		var groupTypeVal = groupType + ', ';
-		var groupTypeTxt = concatValues('groupType',groupTypeVal,'string');	
-
-		var guestsVal = guests + ' travelers, ';
-		var guestsTxt = concatValues('guests',guestsVal,'int');
-
-		var priceVal = pricetext + ', ';
-		var priceTxt = concatValues('weeklyBudget',priceVal,'int');  
-
-		var monthVal = guestTravelMonth + ' ';
-		var monthTxt = concatValues('Month',monthVal,'string');	   
-
-		var yearVal = guestTravelYear + ', ';
-		var yearTxt = concatValues('Year',yearVal,'int');
-
-		var howlongVal = howLong + ' ';
-		var howlongTxt = concatValues('howLong',howlongVal,'int');		   
-
-		text_m += groupTypeTxt + guestsTxt + priceTxt + monthTxt + yearTxt + howlongTxt+ changeans;
-		text_m = cleanStr(text_m);
-		  
-        text_m = text_m.replace(/(^,)|(,$)/g, "");
-
-		$('.page-head strong').text(mainhead);
-		$('.text-muted.left-align').html(text_m); 
-
-		//set defaults
-		if(!getParam('What-Is-Your-Max-Weekly-Budget')){
-		   budget = 0;
-		}
-		if(!getParam('How-Many-People-Are-Traveling')){
-		   guests = 0;
-		}
-		if(!getParam('segId')){
-		   segmentId = 4945;
-		}	   
-     
 		$.ajax({
 			url: 'http://www.rentvillas.com/api/search',
 			data: {
-					locationId : segmentId,
-					budget : budget,
-					guests : guests,
-					travelMonth : (guestTravelMonth == '') ? 0 : moment().month(guestTravelMonth).format("M"),
-					travelYear : (guestTravelYear == '') ? 0 : guestTravelYear,
+					locationId : Qualification.Segment.ReferenceCode,
+					budget : Qualification.Answers.what_is_your_max_weekly_budget.value,
+					guests : Qualification.Answers.how_many_people_are_traveling.value,
+					travelMonth : (when === 'undefined') ? 0 : moment(when.value, "MM/DD/YYYY").format("M"),
+					travelYear : (when === 'undefined') ? 0 : moment(when.value, "MM/DD/YYYY").format("YYYY"),
 					results : 12,
 					minimumResults : 6
 				},
