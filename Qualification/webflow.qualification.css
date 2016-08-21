@@ -149,9 +149,6 @@ form .select{
   .link.separator:hover {
     border-color: #fff;
   }
-  .dialog.signup {
-      overflow-y: scroll;
-  }
   
   .popup-close .close-popup{
     color:#2a262b;text-decoration:none;
