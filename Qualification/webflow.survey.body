@@ -21,7 +21,7 @@
             });
               
               //console.log(formitems);
-          $('.step6 .w-button.next-btn.hide-btn').trigger('click');
+          $('.step6 .w-button').trigger('click');
       }     
       
       $('.step6 .w-radio.radio-wrap').on('click',function(){              

@@ -320,7 +320,7 @@ function QualificationApp(){
 		s = s + 2;
 	}  
 	$.each(a, function(index, number){
-		options.push({'val': number, 'text': number});	
+		options.push({'val': number, 'text': number.toString()});	
 	});
 
 }

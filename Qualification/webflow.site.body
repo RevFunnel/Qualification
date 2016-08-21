@@ -28,25 +28,22 @@
 		  }
 		});
 		
-		//add segments data if we have it
+		/* SEGMENTS */
+		//add segments data if we have it (this is dynamically set via embed codes in dynamic collection)
 		if ("segments" in window)
 		{			
 			Qualification.Segments = window.segments;
 		}
 		
-		//grab segment from global object and set the title if we have it
-		if ("Segment" in window)
-		{			
-			Qualification.Segment = window.Segment;
-			Qualification.Segment.Title = (getParam('area')) ? getParam('area') : Qualification.Segment.Name;
-		}
+		//grab defined segment from global object and set the title if we have it (set via embed code)
+		if ("Segment" in window) Qualification.Segment = window.Segment;
 		
 		//if we don't have a segment defined, but we have one in the url then setup the segment
-		if (!'Segment' in Qualification && getParam('segId') && 'Segments' in Qualification){
+		if ((!('Segment' in Qualification)) && getParam('segId') && 'Segments' in Qualification){
 			Qualification.Segment = Qualification.Segments[getParam('segId')];
 		}
 		
-		//persist our segment if we have set it up, or look to local storage for one
+		//now persist our segment if we have set it up, or look to local storage for one if we still don't have one
 		if ('Segment' in Qualification){
 			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
 		}
@@ -56,23 +53,32 @@
 		
 		if (!'Segment' in Qualification) throw 'No segment defined either in url or local storage';
 		
+		//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
+		Qualification.Segment.Title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
+		
+		/*ANSWERS*/
+		
 		//do we have existing answers?
 		var answers = window.JSON.parse(Qualification.DB.getItem('qualification.answers'));
-		if (answers){
+		if (answers && !($.isEmptyObject(answers))){
 			Qualification.Answers = answers;
 		} else {
-			//loop through our query params for answers
+			//no, so loop through our query params for answers
+			Qualification.Answers = Qualification.Answers || {};
 			for(var key in Qualification.UrlParams) {
 				if (Qualification.Questions[key]){
 					Qualification.Answers = Qualification.Answers || {};
 					//we have an answer so add to answers 
 					Qualification.Answers[key] = {
 						'id' : key,
-						'value': Qualification.UrlParams[key],
+						'value': Qualification.UrlParams[key]
 					}
+					var q = $.grep(Qualification.Questions[key],function(e){return e.val.toString() === Qualification.UrlParams[key]})[0];
+					if (!(q === undefined)) Qualification.Answers[key].selectedText = q.text
 				};
 					
 			}
+			Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
 		}
 		
 		Qualification.Session = sessionStorage;
@@ -91,7 +97,7 @@
 		
 			//store details of the visit in session storage
 			Qualification.Visit = window.JSON.parse(Qualification.Session.getItem('qualification.visit'));
-			if (Qualification.Visit === "undefined"){
+			if (Qualification.Visit === undefined){
 				Qualification.Visit = {
 					'session_url': window.location.href,
 					'session_referrer': document.referrer
