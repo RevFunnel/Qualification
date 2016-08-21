@@ -216,7 +216,7 @@ function QualificationApp(){
 		var match,
 			pl     = /@@@/g,  // Regex for replacing addition symbol with a space, you could replace @@@ with a + to remove those from values
 			search = /([^&=]+)=?([^&]*)/g,
-			decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+			decode = function (s) { return htmlEscape(decodeURIComponent(s.replace(pl, " "))); },
 			query  = window.location.search.substring(1);
 
 		Qualification.UrlParams = {};
