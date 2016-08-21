@@ -351,7 +351,7 @@ function formToQueryString(selector)
 {
 	 var kvpairs = [];
 	 $(selector).each(function(index){
-	   kvpairs.push(encodeURIComponent((this).attr("id")) + "=" + encodeURIComponent(this.value));
+	   kvpairs.push(encodeURIComponent(this.id) + "=" + encodeURIComponent(this.value));
 	 })
 	 return kvpairs.join("&");
 }
