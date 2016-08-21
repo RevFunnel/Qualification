@@ -55,6 +55,8 @@
 		
 		//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
 		Qualification.Segment.Title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
+		$(".main-heading-span > span").html(Qualification.Segment.Title);
+		
 		
 		/*ANSWERS*/
 		
