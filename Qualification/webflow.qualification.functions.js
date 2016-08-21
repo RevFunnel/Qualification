@@ -250,33 +250,22 @@ function QualificationApp(){
 	SetupStorage();
 	
 	//Load question data
-	Qualification.Questions = [];
-	Qualification.Questions.push({
-		'id' : 'who_is_travelling',
-		'options' : [
-						
-						{text:"Group with children", val:"1"},
-						{text:"Group of adults", val:"2"},
-						{text:"Just two of us", val:"3"}
-					]
-	});
-
-	Qualification.Questions.push({
-		'id' : 'how_long_will_you_stay',
-		'options' : [
+	Qualification.Questions = {};
+	Qualification.Questions["who_is_travelling"] = [
+		{text:"Group with children", val:"1"},
+		{text:"Group of adults", val:"2"},
+		{text:"Just two of us", val:"3"}
+	];
+	
+	Qualification.Questions["how_long_will_you_stay"] = [
 		 {text:"less than a week", val:"1"},
 		 {text:"1 week", val:"7"},
 		 {text:"2 weeks", val:"14"},
 		 {text:"3 weeks", val:"21"},
 		 {text:"1 month or more", val:"30"},
-		]
-	});
+	];
 	
-	var question = {
-		'id' : 'when_do_you_plan_to_travel',
-		'options' : []
-	};
-	
+	var options = Qualification.Questions["when_do_you_plan_to_travel"] = [];
 	var today = new Date(), 
 		start = new Date(today.getFullYear(), today.getMonth(), 1),
 		x = 36,
@@ -285,19 +274,14 @@ function QualificationApp(){
 	end.setMonth(start.getMonth() + x);
 	var dates = getAllMonths(start, end);
 	$.each(dates, function(index, date) {
-		question.options.push({
+		options.push({
 			'val': moment(date).format('MM/DD/YYYY'),
 			'text' : moment(date).format('MMM YYYY')				
 		});
 	});
 	
-	Qualification.Questions.push(question);
 	
-	var question = {
-		'id' : 'what_is_your_max_weekly_budget',
-		'options' : []
-	}; 	
-	
+	var options = Qualification.Questions["what_is_your_max_weekly_budget"] = [];
 	var s = 1000;
 	var e = 10000;
 	var prices = [];
@@ -305,7 +289,6 @@ function QualificationApp(){
 		prices.push(s);
 		s = s + 1000;
 	}
-
 	s = 10000;
 	e = 20000;
 	while (s < e) {
@@ -318,15 +301,10 @@ function QualificationApp(){
 	prices.push(80000);
 	
 	$.each(prices, function(index, price){
-		question.options.push({'val':price, 'text': '$' + numberWithCommas(price)});	
+		options.push({'val':price, 'text': '$' + numberWithCommas(price)});	
 	});
 	
-	Qualification.Questions.push(question);
-	
-	var question = {
-		'id' : 'how_many_people_are_traveling',
-		'options' : []
-	};
+	var options = Qualification.Questions["how_many_people_are_traveling"] = [];
 	var s = 1;
 	var e = 18;
 	var a = [];
@@ -342,9 +320,9 @@ function QualificationApp(){
 		s = s + 2;
 	}  
 	$.each(a, function(index, number){
-		question.options.push({'val': number, 'text': number});	
+		options.push({'val': number, 'text': number});	
 	});
-	Qualification.Questions.push(question);
+
 }
 
 function formToQueryString(selector)
@@ -393,7 +371,7 @@ function setHeight() {
 // Single Page Form: Populate single page forms drop downs
 function populate_select(fieldId){
   var el = $('#' + fieldId);
-  var options = $.grep(Qualification.Questions, function(e){return e.id == fieldId})[0].options;
+  var options = Qualification.Questions[fieldId];
   
   $(el).empty();
   $(el).append($('<option>').text("Please choose...").attr('value', 0));
