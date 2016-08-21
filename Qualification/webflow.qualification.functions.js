@@ -158,7 +158,7 @@ function gridifyColumn(obj){
 }
 
 function showSignupform(){
-	if('email' in Qualification.User){
+	if(!('email' in Qualification.User)){
 		jQuery('.signup-section').fadeIn('slow'); 
 		window.dataLayer.push({
 			'event' : 'GAEvent',
