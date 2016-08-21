@@ -347,6 +347,15 @@ function QualificationApp(){
 	Qualification.Questions.push(question);
 }
 
+function formToQueryString(selector)
+{
+	 var kvpairs = [];
+	 $(selector).each(function(index){
+	   kvpairs.push(encodeURIComponent((this).attr("id")) + "=" + encodeURIComponent(this.value));
+	 })
+	 return kvpairs.join("&");
+}
+
 function SetupStorage(){
 	Qualification.DB;
 	try {

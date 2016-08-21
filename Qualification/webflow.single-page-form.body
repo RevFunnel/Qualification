@@ -27,7 +27,7 @@
 		
 		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
 		
-		var qstr = $( "input[type!='hidden'], select" ).serialize() + '&segId='+Qualification.Segment.ReferenceCode+ '&title='+Qualification.Segment.Name;		
+		var qstr = formToQueryString("input[type!='hidden'], select") + '&segId='+Qualification.Segment.ReferenceCode+ '&title='+Qualification.Segment.Title;		
 		$( "#wf-form-Start_Single_Page_Form-2" ).attr("data-redirect", qstr);
 		$('.single-page-form-submit').trigger('click'); 
 		

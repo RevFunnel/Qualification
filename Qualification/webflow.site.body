@@ -34,19 +34,19 @@
 			Qualification.Segments = window.segments;
 		}
 		
-		//persist segment data if we have it
+		//grab segment from global object and set the title if we have it
 		if ("Segment" in window)
 		{			
 			Qualification.Segment = window.Segment;
-			if (getParam('area')) Qualification.Segment.Title = getParam('area');
+			Qualification.Segment.Title = (getParam('area')) ? getParam('area') : Qualification.Segment.Name;
 		}
 		
-		
-		//if we don't have a segment defined, but we have one in the url
+		//if we don't have a segment defined, but we have one in the url then setup the segment
 		if (!'Segment' in Qualification && getParam('segId') && 'Segments' in Qualification){
 			Qualification.Segment = Qualification.Segments[getParam('segId')];
 		}
 		
+		//persist our segment if we have set it up, or look to local storage for one
 		if ('Segment' in Qualification){
 			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
 		}
@@ -60,6 +60,19 @@
 		var answers = window.JSON.parse(Qualification.DB.getItem('qualification.answers'));
 		if (answers){
 			Qualification.Answers = answers;
+		} else {
+			//loop through our query params for answers
+			for(var key in Qualification.UrlParams) {
+				if (Qualification.Questions[key]){
+					Qualification.Answers = Qualification.Answers || {};
+					//we have an answer so add to answers 
+					Qualification.Answers[key] = {
+						'id' : key,
+						'value': Qualification.UrlParams[key],
+					}
+				};
+					
+			}
 		}
 		
 		Qualification.Session = sessionStorage;
