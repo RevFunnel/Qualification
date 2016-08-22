@@ -54,8 +54,8 @@
 		if (!'Segment' in Qualification) throw 'No segment defined either in url or local storage';
 		
 		//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
-		Qualification.Segment.Title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
-		$(".main-heading-span > span").html(Qualification.Segment.Title);
+		Qualification.Segment.title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
+		$(".main-heading-span > span").html(Qualification.Segment.title);
 		
 		
 		/*ANSWERS*/
@@ -91,15 +91,17 @@
 			
 			Qualification.User = user;
 			
-			//yes, so boot intercom for user
-			window.Intercom("boot", {
-				app_id: "tx9uxfb3",
-				user_id: user.visitorId
-			});
+			//boot intercom for user if we have email
+			if ("email" in user){
+				window.Intercom("boot", {
+					app_id: "tx9uxfb3",
+					user_id: user.visitorId
+				});
+			}
 		
 			//store details of the visit in session storage
 			Qualification.Visit = window.JSON.parse(Qualification.Session.getItem('qualification.visit'));
-			if (Qualification.Visit === undefined){
+			if (Qualification.Visit == undefined){
 				Qualification.Visit = {
 					'session_url': window.location.href,
 					'session_referrer': document.referrer
@@ -108,7 +110,7 @@
 			}
 		
 		}else {
-			//no, so assign a visitorid
+			//no, so assign a visitorId
 			var uniqueId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 				var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 				return v.toString(16);
@@ -160,7 +162,7 @@
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "user_id")
-				.attr('value', $.cookie('rv_user_id'))
+				.attr('value', Qualification.User.visitorId)
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "page_url")
@@ -177,6 +179,14 @@
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "session_referrer")
 				.attr('value', Qualification.Visit.session_referrer)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "segment_name")
+				.attr('value', Qualification.Segment.name)
+				.appendTo('form');
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "segment_referenceCode")
+				.attr('value', Qualification.Segment.referenceCode)
 				.appendTo('form');
 						
 		});
@@ -230,8 +240,8 @@
 				});
 			  
 				//persist user details
-				Qualification.User.first_name = $("#wf-form-emailSignupForm #name").val().split(' ').slice(0, -1).join(' ');
-				Qualification.User.last_name = $("#wf-form-emailSignupForm #name").val().split(' ').slice(-1).join(' ');
+				Qualification.User.first_name = getFirstName($("#wf-form-emailSignupForm #name").val());
+				Qualification.User.last_name = getLastName($("#wf-form-emailSignupForm #name").val(), '');
 				Qualification.User.email = $( "#wf-form-emailSignupForm #email" ).val();
 				Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
 				

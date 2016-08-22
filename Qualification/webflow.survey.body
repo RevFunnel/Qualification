@@ -7,7 +7,7 @@
       
       DB.setItem('govar','-1'); 
       if('HeroImage' in Qualification.Segment && !Webflow.isMobile()){     
-         var imgcode = 'url('+ Qualification.Segment.HeroImage +')';       
+         var imgcode = 'url('+ Qualification.Segment.heroImage +')';       
          $('#hero-banner-section').css('background-image',imgcode);
        }
     
