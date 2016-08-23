@@ -264,6 +264,20 @@
         }); 
 		
 		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
+			
+			//split the first and last name and add a last name field if one exists 
+			var lastName = getLastName($("#wf-form-emailSignupForm #name").val(), '');
+			var firstName = getFirstName($("#wf-form-emailSignupForm #name").val());
+			$('<input />').attr('type', 'hidden')
+					.attr('name', "first_name")
+					.attr('value', firstName)
+					.appendTo('form');
+			if (lastName !== '')
+				$('<input />').attr('type', 'hidden')
+					.attr('name', "last_name")
+					.attr('value', lastName)
+					.appendTo('form');
+			
 			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
 			e.preventDefault();
 		});

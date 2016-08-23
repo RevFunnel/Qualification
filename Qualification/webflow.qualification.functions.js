@@ -358,12 +358,12 @@ function QualificationApp(){
 
 }
 
-function formToQueryString(selector)
+function answersToQueryString(answers)
 {
 	 var kvpairs = [];
-	 $(selector).each(function(index){
-	   kvpairs.push(encodeURIComponent(this.id) + "=" + encodeURIComponent(this.value));
-	 })
+	 for(var answer in answers) {
+	   kvpairs.push(encodeURIComponent(answer.id) + "=" + encodeURIComponent(answer.value));
+	 }
 	 return kvpairs.join("&");
 }
 
