@@ -65,7 +65,7 @@
 	  if ('Answers' in Qualification){
 		  $.each(Qualification.Answers, function(i, value){
 			  if (value.type === 'radio') {
-				$("input[name=" + value.id + "][value=" + value.value + "]").prop('checked', true);   
+				$("#" + value.id).prop('checked', true);   
 			  } else{
 				$("#" + value.id).val(value.value).change();  
 			  }
