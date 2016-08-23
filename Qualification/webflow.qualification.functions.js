@@ -362,7 +362,8 @@ function answersToQueryString(answers)
 {
 	 var kvpairs = [];
 	 for(var answer in answers) {
-	   kvpairs.push(encodeURIComponent(answers[answer].id) + "=" + encodeURIComponent(answers[answer].value));
+		var identifier = (answer.type === "radio") ? answer.name : answer.id;
+		kvpairs.push(encodeURIComponent(identifier) + "=" + encodeURIComponent(answers[answer].value));
 	 }
 	 return kvpairs.join("&");
 }

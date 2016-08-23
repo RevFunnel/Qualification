@@ -75,6 +75,7 @@
 						'id' : key,
 						'value': Qualification.UrlParams[key]
 					}
+					//check if we have a question with defined data (a drop down)
 					var q = $.grep(Qualification.Questions[key],function(e){return e.val.toString() === Qualification.UrlParams[key]})[0];
 					if (!(q === undefined)) Qualification.Answers[key].selectedText = q.text
 				};
