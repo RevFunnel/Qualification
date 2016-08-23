@@ -284,6 +284,7 @@ function QualificationApp(){
 	
 	//Load question data
 	Qualification.Questions = {};
+	
 	Qualification.Questions["who_is_travelling"] = [
 		{text:"Group with children", val:"1"},
 		{text:"Group of adults", val:"2"},
@@ -409,6 +410,12 @@ function setHeight() {
 	   $('.signup.dialog').css('height', windowHeight);
 	}
 };
+
+function toTitleCase(str) {
+    return str.replace(/(?:^|\s)\w/g, function(match) {
+        return match.toUpperCase();
+    });
+}
 
 // Single Page Form: Populate single page forms drop downs
 function populate_select(fieldId){

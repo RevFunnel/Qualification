@@ -57,6 +57,19 @@
 		Qualification.Segment.title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
 		$(".main-heading-span > span").html(Qualification.Segment.title);
 		
+		//log our segment with GA 		
+		window.dataLayer.push({
+			'event' : 'addToCustomDimension',
+			'eventCategory' : 'custom dimension',
+			'eventAction' : 'add to custom dimension',
+			'eventLabel' : Qualification.Segment.name.toLowerCase(),
+			'eventValue' : '2',
+			'eventNonInteractionHit' : true
+		});
+		
+		/*EXPERIMENT*/
+		Qualification.experimentId = Qualification.DB.getItem('qualification.experiment');
+		
 		
 		/*ANSWERS*/
 		
@@ -96,7 +109,7 @@
 			if ("email" in user){
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
-					user_id: user.visitorId
+					email: user.email
 				});
 			}
 		
@@ -189,7 +202,11 @@
 				.attr('name', "segment_referenceCode")
 				.attr('value', Qualification.Segment.referenceCode)
 				.appendTo('form');
-						
+			if ("experimentId" in Qualification)			
+				$('<input />').attr('type', 'hidden')
+				.attr('name', "experiment_name")
+				.attr('value', Qualification.experimentId)
+				.appendTo('form');
 		});
 		
 		setHeight();
@@ -246,12 +263,15 @@
 				Qualification.User.email = $( "#wf-form-emailSignupForm #email" ).val();
 				Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
 				
+				//set cookie with user data 
+				Cookies.set('user', Qualification.User, { expires: 7, domain: 'rentvillas.com' });
+				
 				//boot intercom
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
 					name: $("#wf-form-emailSignupForm #name").val(), 
 					email: Qualification.User.email,
-					user_id: Qualification.User.visitorId
+					ga_clientId: window.ga_clientId
 				});
 				
 				dataLayer.push({
@@ -333,14 +353,14 @@
 </script>
 
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js?v=2"></script>
-<script type="text/javascript" src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
-<script type="text/javascript" src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/webflow.qualification.functions.js?v=2"></script>
+<script src="//rawgit.com/RevFunnel/Qualification/master/Qualification/scripts/pinterest_grid.js"></script>
+<script src="//cdn.rawgit.com/Download/memorystorage/master/dist/memorystorage.min.js"></script>
 
 
 
