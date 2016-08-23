@@ -13,15 +13,20 @@
 		//persist form answers and input type
 		Qualification.Answers = {};
 		$("input, select").not("[type='hidden']").not("[type='submit']").filter(':input').each(function(){
+			//if we have a default or unselected option, we don't add it to the answer, and move next 
+			if (this.value.toString() === "0" || this.value.toString() === '') return true;
+			if (this.type === "radio" && !this.checked) return true; //continue if we have a radio button that isn't checked
 			var answer = {
 				'id' : this.id,
 				'name' : this.name,
 				'value' : this.value,
 				'type' : this.type || this.tagName.toLowerCase()
 			};
+			
 			if (this.type === "select-one") {
 				answer.selectedText = $(this).find(":selected").text();
 			}
+			
 			Qualification.Answers[this.id] = answer;
 		});
 		

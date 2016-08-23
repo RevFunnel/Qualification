@@ -362,7 +362,7 @@ function answersToQueryString(answers)
 {
 	 var kvpairs = [];
 	 for(var answer in answers) {
-	   kvpairs.push(encodeURIComponent(answer.id) + "=" + encodeURIComponent(answer.value));
+	   kvpairs.push(encodeURIComponent(answers[answer].id) + "=" + encodeURIComponent(answers[answer].value));
 	 }
 	 return kvpairs.join("&");
 }
