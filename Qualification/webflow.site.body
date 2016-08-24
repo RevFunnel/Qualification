@@ -269,9 +269,9 @@
 				//boot intercom
 				window.Intercom("boot", {
 					app_id: "tx9uxfb3",
-					name: $("#wf-form-emailSignupForm #name").val(), 
+					name: toTitleCase($("#wf-form-emailSignupForm #name").val()), 
 					email: Qualification.User.email,
-					ga_clientId: window.ga_clientId
+					'ga client id': window.ga_clientId
 				});
 				
 				dataLayer.push({
