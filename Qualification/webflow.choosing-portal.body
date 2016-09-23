@@ -1,0 +1,23 @@
+<script>
+jQuery(document).ready(function($){ 
+	//hide any results that weren't requested
+  
+	//show the sign up form
+	setTimeout(showSignupform, 2500); 
+});
+
+</script>
+
+<script>
+$('.result-cta-cheveron').click(function() {
+  var clicks = $(this).data('clicks');
+  if (clicks) {
+     $(this).removeClass('active');
+  } else {
+  $(this).addClass('active');
+    
+  }
+  $(this).data("clicks", !clicks);
+});
+</script>
+

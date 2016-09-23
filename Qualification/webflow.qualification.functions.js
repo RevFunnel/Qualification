@@ -159,7 +159,7 @@ function gridifyColumn(obj){
 
 function showSignupform(){
 	if(!('email' in Qualification.User)){
-		jQuery('.signup-section').fadeIn('slow'); 
+		jQuery('#signup-section').fadeIn('slow'); 
 		window.dataLayer.push({
 			'event' : 'GAEvent',
 			'eventCategory' : 'sign-up form',
@@ -167,8 +167,8 @@ function showSignupform(){
 			'eventLabel' : window.location.href,
 			'eventValue' : undefined,
 			'eventNonInteractionHit' : true
-	});
-  } 
+		});
+	} 
 } 
 
 //utility methods

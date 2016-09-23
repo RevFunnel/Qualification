@@ -1,0 +1,115 @@
+<script>
+
+ jQuery(document).ready(function($){ 
+ 
+
+	//get all questions
+	var wrappers = $('.funnel-question-wrapper');
+	
+	//for each question, add the href which links to the next question 
+	$.each(wrappers, function(index, wrapper) {
+		//get the next question
+		var next = wrappers.eq(index + 1);
+		if (next.length > 0){
+			//now get all child links
+			$(wrapper).find(".indiv-choice").attr("data-href", "#" + next[0].id);
+		}
+	});
+	
+ 	$(function() {
+	  $('.indiv-choice').click( function() {
+/* 		$(this).addClass('active').siblings().removeClass('active');
+		$(this).find("input").prop('checked', true); //toggle the radio on
+		$(this).siblings().find("input").prop('checked', false); //toggle the sibling radio off */
+		
+		var target = $(this).data("href");
+		$target = $(target);
+		$('html, body').stop().animate({
+			'scrollTop': $target.offset().top
+		}, 900, 'swing', function() {
+			window.location.hash = target;
+		});
+		
+	  });
+	}); 
+
+/* 	$(function() {
+	  $('.btn.bg-brand-color.choose').click( function() {
+		$(this).addClass('active').siblings().removeClass('active');
+	  });
+	}); */
+	
+	//tracks form interaction
+	$('#wf-form-Choosing-Form').on('click',function(e){
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'single-page-form',
+			'eventAction' : 'interacted with',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+	});
+      
+	$('#result > div.choosing-btn-wrapper > a').on('click',function(){ 
+	  //if($('#wf-form-Start_Single_Page_Form-2').valid()){
+		   submitForm(); 
+	  //}                   
+	});         
+      
+      populate_form_fields(jQuery);
+	  
+	  //now set values based on persisted answers if we have them
+	  if ('Answers' in Qualification){
+		  $.each(Qualification.Answers, function(i, value){
+			  if (value.type === 'radio') {
+				$("#" + value.id).prop('checked', true);   
+			  } else{
+				$("#" + value.id).val(value.value).change();  
+			  }
+		  });
+	  }
+	
+	function submitForm(){			 
+	
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'single-page-form',
+			'eventAction' : 'submitted',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+
+		//persist form answers and input type
+		Qualification.Answers = {};
+		$("input, select").not("[type='hidden']").not("[type='submit']").filter(':input').each(function(){
+			//if we have a default or unselected option, we don't add it to the answer, and move next 
+			if (this.value.toString() === "0" || this.value.toString() === '') return true;
+			if (this.type === "radio" && !this.checked) return true; //continue if we have a radio button that isn't checked
+			var answer = {
+				'id' : this.id,
+				'name' : this.name,
+				'value' : this.value,
+				'type' : this.type || this.tagName.toLowerCase()
+			};
+			
+			if (this.type === "select-one") {
+				answer.selectedText = $(this).find(":selected").text();
+			}
+			
+			Qualification.Answers[this.id] = answer;
+		});
+		
+		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
+		
+		var qstr = answersToQueryString(Qualification.Answers) + '&segId='+Qualification.Segment.referenceCode+ '&title='+Qualification.Segment.title;		
+		
+		$('.choosing-form-submit').trigger('click'); 
+		
+		setTimeout(function(){window.location.href = '/choosing-portal?' + qstr;}, 500); 
+	}
+	
+});
+
+</script>
