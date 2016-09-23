@@ -159,7 +159,9 @@ function gridifyColumn(obj){
 
 function showSignupform(){
 	if(!('email' in Qualification.User)){
-		jQuery('#signup-section').fadeIn('slow'); 
+		$('#signup-section').fadeIn('slow'); 
+		$(document.documentElement).css('overflow', 'hidden'); //hack to prevent background scrolling
+		
 		window.dataLayer.push({
 			'event' : 'GAEvent',
 			'eventCategory' : 'sign-up form',

@@ -238,10 +238,11 @@
 		});
 
 		//The sign up form 
-		$( "#wf-form-emailSignupForm" ).submit(function( event ) {
-			if (!$("#wf-form-emailSignupForm")[0].checkValidity || $("#wf-form-emailSignupForm")[0].checkValidity()) {
+		$( "#wf-form-signup-form" ).submit(function( event ) {
+			if (!$("#wf-form-signup-form")[0].checkValidity || $("#wf-form-signup-form")[0].checkValidity()) {
 				/* submit the form */
-				$('.signup-section').fadeOut('slow');    
+				$('.modal-popup-wrapper').fadeOut('slow');    
+				$(document.documentElement).css('overflow', ''); //hack to prevent scrolling (in showing dialog) and now hiding and undoing that
           
 				//trigger sign-up conversion for VWO
 				window._vis_opt_queue = window._vis_opt_queue || [];
