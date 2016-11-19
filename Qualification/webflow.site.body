@@ -7,6 +7,8 @@
 		$(window).load(function(){
 			$.webshims.polyfill('forms');
 		});
+		
+
 
 		var DateFormats = {
 				short: "DD MMMM - YYYY",
@@ -51,21 +53,25 @@
 			Qualification.Segment = window.JSON.parse(Qualification.DB.getItem('qualification.segment'));
 		}
 		
-		if (!'Segment' in Qualification) throw 'No segment defined either in url or local storage';
-		
-		//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
-		Qualification.Segment.title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
-		$(".main-heading-span > span").html(Qualification.Segment.title);
-		
-		//log our segment with GA 		
-		window.dataLayer.push({
-			'event' : 'addToCustomDimension',
-			'eventCategory' : 'custom dimension',
-			'eventAction' : 'add to custom dimension',
-			'eventLabel' : Qualification.Segment.name.toLowerCase(),
-			'eventValue' : '2',
-			'eventNonInteractionHit' : true
-		});
+		if ('Segment' in Qualification && Qualification.Segment !== null) 
+		{		
+			//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
+			Qualification.Segment.title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
+			$(".main-heading-span > span").html(Qualification.Segment.title);
+			
+			//log our segment with GA 	
+			if ("dataLayer" in window)
+			{
+				window.dataLayer.push({
+					'event' : 'addToCustomDimension',
+					'eventCategory' : 'custom dimension',
+					'eventAction' : 'add to custom dimension',
+					'eventLabel' : Qualification.Segment.name.toLowerCase(),
+					'eventValue' : '2',
+					'eventNonInteractionHit' : true
+				});
+			}
+		}
 		
 		/*EXPERIMENT*/
 		Qualification.experimentId = Qualification.DB.getItem('qualification.experiment');
@@ -78,7 +84,7 @@
 		if (answers && !($.isEmptyObject(answers))){
 			Qualification.Answers = answers;
 		} else {
-			//no, so loop through our query params for answers
+			//no, so loop through our query params and check if the param is the key to an answer
 			Qualification.Answers = Qualification.Answers || {};
 			for(var key in Qualification.UrlParams) {
 				if (Qualification.Questions[key]){
@@ -108,7 +114,7 @@
 			//boot intercom for user if we have email
 			if ("email" in user){
 				window.Intercom("boot", {
-					app_id: "tx9uxfb3",
+					app_id: window.intercomAppId,
 					email: user.email
 				});
 			}
@@ -194,18 +200,34 @@
 				.attr('name', "session_referrer")
 				.attr('value', Qualification.Visit.session_referrer)
 				.appendTo('form');
-			$('<input />').attr('type', 'hidden')
-				.attr('name', "segment_name")
-				.attr('value', Qualification.Segment.name)
-				.appendTo('form');
-			$('<input />').attr('type', 'hidden')
-				.attr('name', "segment_referenceCode")
-				.attr('value', Qualification.Segment.referenceCode)
-				.appendTo('form');
+			if (Qualification.Segment !== null)	{
+				$('<input />').attr('type', 'hidden')
+					.attr('name', "segment_name")
+					.attr('value', Qualification.Segment.name)
+					.appendTo('form');
+				$('<input />').attr('type', 'hidden')
+					.attr('name', "segment_referenceCode")
+					.attr('value', Qualification.Segment.referenceCode)
+					.appendTo('form');
+			}
 			if ("experimentId" in Qualification)			
 				$('<input />').attr('type', 'hidden')
 				.attr('name', "experiment_name")
 				.attr('value', Qualification.experimentId)
+				.appendTo('form');
+			
+			//the experience and opportunity meta tags define the experience and opportunity for any forms on the page.
+			var experience = $('meta[name=experience]').attr("content");
+			if(experience !== 'undefined')
+				$('<input />').attr('type', 'hidden')
+				.attr('name', "funnel_experience")
+				.attr('value', experience)
+				.appendTo('form');
+			var opportunity = $('meta[name=opportunity]').attr("content");
+			if(opportunity !== 'undefined')
+				$('<input />').attr('type', 'hidden')
+				.attr('name', "funnel_opportunity")
+				.attr('value', opportunity)
 				.appendTo('form');
 		});
 		
@@ -214,17 +236,12 @@
 		$(window).resize(function() {
 			setHeight();
 		});        
-        
-		//prevent scrolling when the sign up form is showing
-/* 		$(".signup.wel-sec").mouseenter(function(){
-			$(window).bind("scroll", function(e){
-				e.preventDefault();
-			}); 
-		});        
 
-		Scrollbar.initAll(); */
-		
-		
+		//All comments cause intercom to open message window when user name clicked
+		$("a.staff-name").on('click', function(e){
+			Intercom('showNewMessage');
+		});
+        
 		//Click on change answer
 		$('.change-ans').on('click',function(e){
 			history.go(-1); 
@@ -237,10 +254,25 @@
 			e.preventDefault();
 		});
 
-		//The sign up form 
-		$( "#wf-form-signup-form" ).submit(function( event ) {
-			if (!$("#wf-form-signup-form")[0].checkValidity || $("#wf-form-signup-form")[0].checkValidity()) {
-				/* submit the form */
+		//Site-wide sign up form functionality. Any form specific functionality should be setup at the page level
+		$( "[id^=wf-form-sign-up-form]" ).submit(function( event ) {
+			if (!$("[id^=wf-form-sign-up-form]")[0].checkValidity || $("[id^=wf-form-sign-up-form]")[0].checkValidity()) {
+				
+				//split the first and last name and add a last name field if one exists 
+				var name = $("input[name='Name']").val();
+				var lastName = getLastName(name, '');
+				var firstName = getFirstName(name);
+				$('<input />').attr('type', 'hidden')
+					.attr('name', "first_name")
+					.attr('value', firstName)
+					.appendTo('form');
+				if (lastName !== '')
+				$('<input />').attr('type', 'hidden')
+					.attr('name', "last_name")
+					.attr('value', lastName)
+					.appendTo('form');
+				
+				/* hide the form */
 				$('.modal-popup-wrapper').fadeOut('slow');    
 				$(document.documentElement).css('overflow', ''); //hack to prevent scrolling (in showing dialog) and now hiding and undoing that
           
@@ -259,9 +291,11 @@
 				});
 			  
 				//persist user details
-				Qualification.User.first_name = getFirstName($("#wf-form-emailSignupForm #name").val());
-				Qualification.User.last_name = getLastName($("#wf-form-emailSignupForm #name").val(), '');
-				Qualification.User.email = $( "#wf-form-emailSignupForm #email" ).val();
+				Qualification.User.first_name = firstName;
+				Qualification.User.last_name = lastName;
+				Qualification.User.email = $( "input[name='Email']" ).val();
+				Qualification.User.company = $( "input[name='Company']" ).val();
+				
 				Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
 				
 				//set cookie with user data 
@@ -269,8 +303,8 @@
 				
 				//boot intercom
 				window.Intercom("boot", {
-					app_id: "tx9uxfb3",
-					name: toTitleCase($("#wf-form-emailSignupForm #name").val()), 
+					app_id: window.intercomAppId,
+					name: toTitleCase(name), 
 					email: Qualification.User.email,
 					'ga client id': window.ga_clientId
 				});
@@ -285,68 +319,11 @@
 			}
         }); 
 		
-		$('#wf-form-emailSignupForm').on('click','.button.primary',function(e){
-			
-			//split the first and last name and add a last name field if one exists 
-			var lastName = getLastName($("#wf-form-emailSignupForm #name").val(), '');
-			var firstName = getFirstName($("#wf-form-emailSignupForm #name").val());
-			$('<input />').attr('type', 'hidden')
-					.attr('name', "first_name")
-					.attr('value', firstName)
-					.appendTo('form');
-			if (lastName !== '')
-				$('<input />').attr('type', 'hidden')
-					.attr('name', "last_name")
-					.attr('value', lastName)
-					.appendTo('form');
-			
-			$('#wf-form-emailSignupForm #signup-submit').trigger('click');
+
+		$("[id^=wf-form-sign-up-form]").on('click','.btn',function(e){
+			$("[id^=wf-form-sign-up-form] #signup-submit").trigger('click');
 			e.preventDefault();
 		});
-		
-       
-		//the share form
-        $('#wf-form-share-form').on('click','.button.share-button',function(e){
-           $('#share-submit').trigger('click');
-			e.preventDefault();
-        });    
-        
-        $('.share.w-button').on('click',function(e){
-           $( "#wf-form-share-form" )[0].reset();
-           $('.share-section').fadeIn('slow');  
-           e.preventDefault();
-        }); 
-
-	
-        $( "#wf-form-share-form" ).submit(function( event ) {
-            $('.share .comment-top').fadeOut('slow');    
-            setTimeout( function(){   
-                 $( "#wf-form-share-form" )[0].reset();
-                    $('.share-section').hide();
-                    $('.share-success-message').hide();
-					$( "#wf-form-share-form" ).fadeIn();
-					$('.share .comment-top').fadeIn();    
-            }, 5000);  
-        });
-        
-		//fades out the share form when the close button is pressed
-		$('.popup-close').on('click','.close-popup',function(e){
-		   $(".share-section").fadeOut();
-		   e.preventDefault();
-		});
-			
-		//fades out the share form when the button is pressed
-		$("body").click(function(event){
-		  var $target = $(event.target);
-		  if(!$target.is(".button.share")){
-			 $(".share-section").fadeOut();
-		  }
-		});
-
-		$(".share-section .dialog-content").click(function(e){
-		   e.stopPropagation();
-		});    
-        
         
     });
 	

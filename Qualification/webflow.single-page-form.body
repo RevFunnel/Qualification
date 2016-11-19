@@ -41,7 +41,7 @@
 
     jQuery(document).ready(function($){
        
-		//tracks form interaction
+		//track form interaction
 		$('#wf-form-Start_Single_Page_Form-2').on('click',function(e){
 			dataLayer.push({
 				'event' : 'GAEvent',
@@ -53,11 +53,12 @@
 			});
 		});
       
-      $('#wf-form-Start_Single_Page_Form-2 > a').on('click',function(){ 
-          //if($('#wf-form-Start_Single_Page_Form-2').valid()){
-               submitSinglePageForm(); 
-          //}                   
-      });         
+		//form submission
+		$('#wf-form-Start_Single_Page_Form-2 > a').on('click',function(){ 
+		  //if($('#wf-form-Start_Single_Page_Form-2').valid()){
+			   submitSinglePageForm(); 
+		  //}                   
+		});         
       
       populate_form_fields(jQuery);
 	  

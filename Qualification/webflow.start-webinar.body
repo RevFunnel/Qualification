@@ -1,0 +1,115 @@
+<script>
+
+ $(document).ready(function(){ 
+ 	var webinarDate = new Date("December 7, 2016 12:00:00"); //Month Days, Year HH:MM:SS
+    var now = new Date();
+    var diff = (webinarDate.getTime()/1000) - (now.getTime()/1000);
+ 	var clock = $('.your-clock').FlipClock(diff, {
+		clockFace: 'DailyCounter',
+		countdown: true
+	});
+	//set the value of the webinar date on the form
+	$( "input[name='webinar-date']").val(webinarDate.toUTCString());
+
+  
+	//track form interaction
+	$('form').on('click',function(e){
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'webinar-signup-form',
+			'eventAction' : 'interacted with',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+	});
+      
+	//form submission
+	$('form').on('submit',function(){ 
+	  
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'webinar-signup-form',
+			'eventAction' : 'submitted',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+		
+		
+		//split the first and last name and add a last name field if one exists 
+		var name = $("#Your-Name").val();
+		var lastName = getLastName(name, '');
+		var firstName = getFirstName(name);
+		$('<input />').attr('type', 'hidden')
+			.attr('name', "first_name")
+			.attr('value', firstName)
+			.appendTo('form');
+		if (lastName !== '')
+		$('<input />').attr('type', 'hidden')
+			.attr('name', "last_name")
+			.attr('value', lastName)
+			.appendTo('form');
+			
+				//persist user details
+		Qualification.User.first_name = firstName;
+		Qualification.User.last_name = lastName;
+		Qualification.User.email = $( "input[name='Work-Email']" ).val();
+		Qualification.User.company = $( "input[name='Company']" ).val();
+		
+		Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User)); 
+				
+		//boot intercom
+		window.Intercom("boot", {
+			app_id: window.intercomAppId,
+			name: toTitleCase(name), 
+			email: Qualification.User.email,
+			'ga client id': window.ga_clientId
+		});
+		
+		dataLayer.push({
+			'userId' : Qualification.User.visitorId,
+			'event' : 'authentication'
+		});
+
+		//persist form answers and input type
+		Qualification.Answers = {};
+		$("input, select").not("[type='hidden']").not("[type='submit']").filter(':input').each(function(){
+			//if we have a default or unselected option, we don't add it to the answer, and move next 
+			if (this.value.toString() === "0" || this.value.toString() === '') return true;
+			if (this.type === "radio" && !this.checked) return true; //continue if we have a radio button that isn't checked
+			var answer = {
+				'form' : $(this).parents('form:first')[0].id,
+				'id' : this.id,
+				'name' : this.name,
+				'value' : this.value,
+				'type' : this.type || this.tagName.toLowerCase()
+			};
+			
+			if (this.type === "select-one") {
+				answer.selectedText = $(this).find(":selected").text();
+			}
+			
+			Qualification.Answers[this.id] = answer;
+		});
+		
+		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
+
+	});         
+	  
+	//now set values based on persisted answers if we have them
+	if ('Answers' in Qualification){
+		$.each(Qualification.Answers, function(i, value){
+			if (value.type === 'radio') {
+				$("#" + value.id).prop('checked', true);   
+			} else{
+				$("#" + value.id).val(value.value).change();  
+		  }
+		});
+	}
+  
+ });
+
+ </script>
+<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>

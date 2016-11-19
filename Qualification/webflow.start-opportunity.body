@@ -1,0 +1,70 @@
+<script>
+jQuery(document).ready(function($){ 
+	
+	//default the email address based on the user
+	if ("User" in Qualification){
+		if ("email" in Qualification.User){
+			$("#email-3").val(Qualification.User.email);
+			$("#Email-2").val(Qualification.User.email);
+		}
+		if ("first_name" in Qualification.User) $("#Name-3").val((Qualification.User.first_name));
+		if ("last_name" in Qualification.User) $("#Name-3").val($("#Name-3").val() + " " + Qualification.User.last_name);
+		if ("company" in Qualification.User) $("#Company-3").val(Qualification.User.company);
+	}
+	
+	//When button is clicked we move next unless last step when we close
+	$('.opp-modal-button.w-button').on('click',function(e){ 
+		if (this.type === "submit") return;
+		var index = $('#slider-nav').children('.w-active').index();
+		if (index === $('#slider-nav').children().length - 1) $('.opp-modal-wrapper').toggle();
+		else $('#slider-nav').children().eq(index + 1).trigger('tap');  
+	});
+	
+	//hide the slider on the first step of the form
+	$(".opp-slide-nav").toggle();
+	
+	//opp-hero-form-button
+	$('.opp-hero-form-button').on('click',function(e){ 
+          
+		  if($('#email-form-2')[0].checkValidity()){
+			//save email entered to the opp form
+			$("#Email-2").val($("#email-3").val());
+			
+			//trigger modal
+			var ix = Webflow.require('ix');
+			var $el = $('.nav.opp-button');
+			var trigger = {"type":"click","selector":".opp-modal-wrapper","stepsA":[{"display":"block","opacity":1,"transition":"transform 1000ms ease 0, opacity 1000ms ease 0","scaleX":1,"scaleY":1,"scaleZ":1}],"stepsB":[]};
+			ix.run(trigger, $el);
+						
+			e.preventDefault();
+		  }
+    });    
+	
+	//on opp-form submit
+	$('.opp-modal.opp-modal-button.w-button').on('click',function(e){ 
+		if($('[id^=wf-form-opportunity-form]')[0].checkValidity()){
+			$(".opp-slide-nav").toggle();
+			
+			$('#slider-nav').children().eq(1).trigger('tap');  
+			
+			//split the first and last name and add a last name field if one exists 
+			var name = $("input[name='Name']").val();
+			var lastName = getLastName(name, '');
+			var firstName = getFirstName(name);
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "first_name")
+				.attr('value', firstName)
+				.appendTo('form');
+			if (lastName !== '')
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "last_name")
+				.attr('value', lastName)
+				.appendTo('form');
+
+		}
+	});
+	
+});
+</script>
+
+

@@ -1,4 +1,5 @@
 <script>
+function closebutton(){window.location="/start-choosing/" + Qualification.Segment.slug}
 jQuery(document).ready(function($){ 
 	//hide any results that weren't requested by looping through the query params
 	for(var key in Qualification.UrlParams) {
@@ -10,10 +11,41 @@ jQuery(document).ready(function($){
 	//Index the recommendations
 	$(".card.result:visible").find("h3.headline").each(function(index){
 		$(this).text($(this).text() + " " + (index + 1));
+		$(this).data("position", index + 1);
 	});
-  
+	
+	//Add our segment to the page
+	$("div.inline.spacing").text($("div.inline.spacing").text() + " " + Qualification.Segment.name);
+	
+	//Add intercom events for each card clck
+	$(".card.result").on('click',function(e){
+		var metadata = {
+			question: $(this).children("div:first-child").children("div:first-child").attr('id')
+		};
+		Intercom('trackEvent', 'portal-card-clicked', metadata);
+		
+		//any clicks on a figure should create an ecommerce click object
+		pushClickToDataLayer({
+			'productId':$(this).data('productid'),
+			'name':$(this).data('name'),
+			'position':$(this).data('position'),
+			'categories':$(this).data('categories'),
+		});
+		
+		window.dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'portal-card',
+			'eventAction' : 'interacted with',
+			'eventLabel' : $(this).data('position'),
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+					
+	});
+	
+	  
 	//show the sign up form
-	setTimeout(showSignupform, 2500); 
+	setTimeout(showSignupform, 2000); 
 	
 });
 
