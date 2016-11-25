@@ -420,12 +420,12 @@ function toTitleCase(str) {
 }
 
 // Single Page Form: Populate single page forms drop downs
-function populate_select(fieldId){
+function populate_select(fieldId, textForDefaultOption){
   var el = $('#' + fieldId);
   var options = Qualification.Questions[fieldId];
   
   $(el).empty();
-  $(el).append($('<option>').text("Please choose...").attr('value', 0));
+  $(el).append($('<option>').text(textForDefaultOption).attr('value', 0));
   $.each(options, function(i, obj){
 	$(el).append($('<option>').text(obj.text).attr('value', obj.val));
   });        
@@ -433,11 +433,11 @@ function populate_select(fieldId){
 
 function populate_form_fields($){
 	//TODO: get all form selects and loop over them
-	populate_select('who_is_travelling');
-	populate_select('when_do_you_plan_to_travel');
-	populate_select('what_is_your_max_weekly_budget');   
-	populate_select('how_many_people_are_traveling');
-	populate_select('how_long_will_you_stay');
+	populate_select('who_is_travelling', 'Please choose...');
+	populate_select('when_do_you_plan_to_travel', 'Please choose...');
+	populate_select('what_is_your_max_weekly_budget', 'Please choose...');   
+	populate_select('how_many_people_are_traveling', 'Please choose...');
+	populate_select('how_long_will_you_stay', 'Please choose...');
 }
 
 //
