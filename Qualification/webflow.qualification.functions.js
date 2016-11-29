@@ -1,3 +1,15 @@
+
+function GenerateId = function() {
+	var ALPHABET = '23456789abdegjkmnpqrvwxyz';
+	var ID_LENGTH = 8;
+
+	var rtn = '';
+	for (var i = 0; i < ID_LENGTH; i++) {
+		rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+	}
+	return rtn;
+}
+
 //this method standardizes comment data being pulled from contentful
 function StandardizeCommentData(allComments, searchResults){
 
