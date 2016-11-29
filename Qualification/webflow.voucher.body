@@ -1,0 +1,22 @@
+<script>
+
+	jQuery(document).ready(function($){ 
+ 
+		//get email from url and save to a cookie
+		Cookies.set('rve', getParam('e'), { expires: 7, domain: 'rentvillas.com' });
+		Cookies.set('rvlid', getParam('lid'), { expires: 7, domain: 'rentvillas.com' });
+ 
+		populate_select('what_is_your_max_weekly_budget', 'All');   
+		populate_select('how_many_people_are_traveling', 'All');
+
+		$("a.btn.v--2").on('click', function(e){
+			setTimeout(function(){$("#wf-form-voucher-recommendation-form").submit();}, 800); 
+			
+			
+			window.location = 'http://' + $("#region-2").val() + '.rentvillas.com/Listings.aspx?Sleeps=' + $("#how_many_people_are_traveling").val() + "&MaxPrice=" + $("#what_is_your_max_weekly_budget").val() +
+			(($("#bedrooms-2").val() > 0) ? "&DblRooms=" + $("#bedrooms-2").val() : "") + "&target=conversion"
+		});
+	  
+	});
+
+</script>

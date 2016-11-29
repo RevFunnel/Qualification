@@ -7,9 +7,8 @@
 		$(window).load(function(){
 			$.webshims.polyfill('forms');
 		});
-		
 
-
+		//date formats for handlebar scripts
 		var DateFormats = {
 				short: "DD MMMM - YYYY",
 				long: "dddd DD.MM.YYYY HH:mm",
@@ -216,19 +215,7 @@
 				.attr('value', Qualification.experimentId)
 				.appendTo('form');
 			
-			//the experience and opportunity meta tags define the experience and opportunity for any forms on the page.
-			var experience = $('meta[name=experience]').attr("content");
-			if(experience !== 'undefined')
-				$('<input />').attr('type', 'hidden')
-				.attr('name', "funnel_experience")
-				.attr('value', experience)
-				.appendTo('form');
-			var opportunity = $('meta[name=opportunity]').attr("content");
-			if(opportunity !== 'undefined')
-				$('<input />').attr('type', 'hidden')
-				.attr('name', "funnel_opportunity")
-				.attr('value', opportunity)
-				.appendTo('form');
+		
 		});
 		
 		setHeight();
@@ -255,8 +242,8 @@
 		});
 
 		//Site-wide sign up form functionality. Any form specific functionality should be setup at the page level
-		$( "[id^=wf-form-sign-up-form]" ).submit(function( event ) {
-			if (!$("[id^=wf-form-sign-up-form]")[0].checkValidity || $("[id^=wf-form-sign-up-form]")[0].checkValidity()) {
+		$( "[id^=wf-form-portal-recommendations-sign-up]" ).submit(function( event ) {
+			if (!$("[id^=wf-form-portal-recommendations-sign-up]")[0].checkValidity || $("[id^=wf-form-portal-recommendations-sign-up]")[0].checkValidity()) {
 				
 				//split the first and last name and add a last name field if one exists 
 				var name = $("input[name='Name']").val();
@@ -320,8 +307,8 @@
         }); 
 		
 
-		$("[id^=wf-form-sign-up-form]").on('click','.btn',function(e){
-			$("[id^=wf-form-sign-up-form] #signup-submit").trigger('click');
+		$("[id^=wf-form-portal-recommendations-sign-up]").on('click','.btn',function(e){
+			$("[id^=wf-form-portal-recommendations-sign-up] #signup-submit").trigger('click');
 			e.preventDefault();
 		});
         
