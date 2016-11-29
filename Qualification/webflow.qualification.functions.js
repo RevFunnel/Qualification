@@ -1,5 +1,5 @@
 
-function GenerateId = function() {
+function GenerateId() {
 	var ALPHABET = '23456789abdegjkmnpqrvwxyz';
 	var ID_LENGTH = 8;
 
