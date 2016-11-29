@@ -1,0 +1,109 @@
+<script id="listing-template" type="text/x-handlebars-template">
+		<div class="col--result-item col-3 grid--gutter">
+			<article class="result_item" data-name="{{name}}" data-productId="{{productId}}" data-position="{{index}}" data-categories="{{categoriesAsAPath}}">
+				<a class="result_img-wrapper w-inline-block" href="#">
+					<div class="result_sale-thumb">
+						<div class="result_sale-thumb_text">
+							<strong>SAVE<br>up to $455</strong>
+							</div>
+						</div>
+						<div class="result_img-overlay">
+							<div class="result_icon">
+								<div> 10</div>
+							</div>
+						</div>
+					</a>
+					<header class="result_header">
+						<div class="result_breackdown">
+							<div class="result_breakdown_item v--2">
+								<div>9 doubles</div>
+							</div>
+							<div class="result_breakdown_item v--2">
+								<div>2 singles</div>
+							</div>
+							<div class="result_breakdown_item v--2">
+								<div>11 baths</div>
+							</div>
+							<div class="result_breakdown_item v--2">
+								<div>$5000/wk</div>
+							</div>
+						</div><a class="result_headline w-clearfix w-inline-block" href="/portal-detail">
+							<h2 class="result_headline-txt">Recommendation {{index}}</h2>
+							<div class="result_headline-icon"></div>
+						</a>
+					</header>
+					<div class="result_description">
+						<a class="result_description-subtitle w-inline-block" href="/portal-detail">
+							<div>{{name}}</div>
+						</a>
+						<div class="result_location-breakdown">
+						    {{#each categories}}
+							<div class="location-breakdown_item v--2">{{this}},</div>
+							{{/each}}
+						</div>
+						<div class="review_stars">
+							<div class="comment_star--gray review_star"></div>
+							<div class="comment_star--gray review_star"></div>
+							<div class="comment_star--gray review_star"></div>
+							<div class="comment_star--gray review_star"></div>
+							<div class="comment_star--gray review_star"></div>
+						</div>
+					</div><a class="result_sale-wrapper w-inline-block" href="/portal-detail">
+						<div>Offer: SAVE $455/wk before 11/31</div>
+					</a>
+					<div class="result_footer">
+						{{#each comments}}
+							<aside class="comment" data-ix="comment-animation" style="transform: translateX(0px) translateY(0px) translateZ(0px); transition: transform 1200ms linear;">
+								<div class="comment_staff-photo">
+									<img src="https://daks2k3a4ib2z.cloudfront.net/57ffc4716422e951589f8d3b/57ffc4716422e951589f8d7a_57d1dd731961d9ed051e490e_Mary-Kate%255B1%255D.png" width="87">
+								</div>
+								<div class="comment-text">
+									<a class="comment_name" onclick="Intercom('showNewMessage') href="#">{{commenterName}} from RentVillas</a><p class="comment_text">{{commentText}}</p>
+								</div>
+							</aside>
+						{{/each}}
+							<div class="result_action">
+								<div class="result_action-remove">
+									<div class="approval-remove_label">
+										<span class="fonta"></span> Remove</div>
+								</div>
+								<div class="result_action-like">
+									<div class="approval_like-fieild w-checkbox">
+										<input class="approval_like-check w-checkbox-input" id="field-1" type="checkbox">
+											<label class="approval_like-label w-form-label" for="field-1">
+												<span class="approval_like-heart"></span>
+												<span class="approval_like-text">Add to Favorites</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</article>
+					</div>
+
+				</script>
+				<script id="title-template" type="text/x-handlebars-template">
+  Your 
+  {{#if year}}
+  	{{year}}
+  {{/if}}
+  Trip to {{title}}
+				</script>
+				<script id="answers-template" type="text/x-handlebars-template">
+{{#if who_is_travelling}}
+	{{who_is_travelling.selectedText}}, 
+{{/if}}
+{{#if how_many_people_are_traveling}}
+	{{how_many_people_are_traveling.selectedText}} guests total
+{{/if}}
+{{#if what_is_your_max_weekly_budget}}
+	with a budget of {{what_is_your_max_weekly_budget.selectedText}} per week, 
+{{/if}}
+{{#if when_do_you_plan_to_travel}}
+	traveling in {{when_do_you_plan_to_travel.selectedText}} 
+{{/if}}
+{{#if how_long_will_you_stay}}
+	for {{how_long_will_you_stay.selectedText}}
+{{/if}}
+					<a href='#' onClick='history.go(-1);' class='text-muted'> [change my answers]</a>
+				</script>

@@ -10,14 +10,8 @@
 		var listd = getHtmlForListings(standardResults, allcomments);
 		
 		setTimeout( function() {
-			$('.nolist-loader').fadeOut('slow',function(){
-					$(this).remove();
-					$('.recommendations-header').toggle();
-					//$('.share-btn-wrapper').toggle();
-					$('.footer-bar').toggle();
-					$('.onboarding-header').toggle();
-					$('#recommend-list').append(listd); 
-					gridifyColumn($('#recommend-list'));                    
+					$('.grid .grid--center .grid--gutter').append(listd); 
+					
 					setTimeout( showSignupform, 2500);  
 					
 					//any clicks on a figure should create an ecommerce click object

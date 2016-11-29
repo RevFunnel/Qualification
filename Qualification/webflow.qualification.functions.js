@@ -79,6 +79,8 @@ function StandardizeResults(searchResults){
 			'image': obj.PrimaryImage,
 			'categories': arrNames,
 			'categoriesAsAPath': arrNames.join('/'),
+			'doubleBedroomCount': obj.DoubleBedroomCount,
+			
 		});
 	}
 	return result;
