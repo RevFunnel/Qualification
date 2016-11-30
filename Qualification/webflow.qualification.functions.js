@@ -74,12 +74,18 @@ function StandardizeResults(searchResults){
 		result.push({
 			'index':i+1,
 			'name':obj.LocationName,
+			'subhead' : obj.Location,
 			'productId': obj.CatalogId.toString(),
 			'url': 'http://www.rentvillas.com/PropertyDetail.aspx?Catalog=' + obj.CatalogId,
 			'image': obj.PrimaryImage,
 			'categories': arrNames,
 			'categoriesAsAPath': arrNames.join('/'),
-			'doubleBedroomCount': obj.DoubleBedroomCount,
+			'metadata': {
+						'doubleBedroomCount' : obj.DoubleBedroomCount,
+						'singleBedroomCount' : obj.SingleBedroomCount,
+						'bathroomCount' : obj.BathroomCount,
+						'maxPrice' : obj.MaxPrice,
+					},
 			
 		});
 	}
