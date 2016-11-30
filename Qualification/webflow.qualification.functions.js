@@ -224,7 +224,7 @@ function getFirstName(str) {
 function getLastName(str, ifNone) {
     var arr = str.split(' ');
     if(arr.length === 1) {
-        return ifNone || "<None>";
+        return ifNone || "";
     }
     return arr.slice(-1).join(' ');
 }
