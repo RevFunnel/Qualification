@@ -76,7 +76,7 @@ function StandardizeResults(searchResults){
 			'name':obj.LocationName,
 			'subhead' : obj.Location,
 			'productId': obj.CatalogId.toString(),
-			'url': 'http://www.rentvillas.com/PropertyDetail.aspx?Catalog=' + obj.CatalogId,
+			'url': obj.CatalogId,
 			'image': obj.PrimaryImage,
 			'categories': arrNames,
 			'categoriesAsAPath': arrNames.join('/'),
@@ -85,6 +85,7 @@ function StandardizeResults(searchResults){
 						'singleBedroomCount' : obj.SingleBedroomCount,
 						'bathroomCount' : obj.BathroomCount,
 						'maxPrice' : obj.MaxPrice,
+						'maxSavings' : obj.MaximumSavings
 					},
 			
 		});
