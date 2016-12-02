@@ -1,22 +1,37 @@
 <script>
 
+
  $(document).ready(function(){ 
- 	var webinarDate = new Date("December 7, 2016 12:00:00"); //Month Days, Year HH:MM:SS
-    var now = new Date();
-    var diff = (webinarDate.getTime()/1000) - (now.getTime()/1000);
- 	var clock = $('.your-clock').FlipClock(diff, {
+ 	//var webinarDate = new Date(2016, 12, 14, 16); //Month Days, Year HH:MM:SS
+    //var now = new Date();
+    //var diff = (webinarDate.getTime()/1000) - (now.getTime()/1000);
+	var webinarDate = moment("2016-12-14T16:00:00Z");
+	diff = webinarDate.diff(moment());
+ 	var clock = $('.your-clock').FlipClock(diff/1000, {
 		clockFace: 'DailyCounter',
 		countdown: true
 	});
 	//set the value of the webinar date on the form
-	$( "input[name='webinar-date']").val(webinarDate.toUTCString());
+	$( "input[name='webinar-date']").val(webinarDate.toISOString());
 
+	//track form viewed
+	$('a.btn').on('click',function(e){
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'sign-up form',
+			'eventAction' : 'viewed',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+	});
+	
   
 	//track form interaction
 	$('form').on('click',function(e){
 		dataLayer.push({
 			'event' : 'GAEvent',
-			'eventCategory' : 'webinar-signup-form',
+			'eventCategory' : 'sign-up form',
 			'eventAction' : 'interacted with',
 			'eventLabel' : window.location.href,
 			'eventValue' : undefined,
@@ -25,11 +40,12 @@
 	});
       
 	//form submission
-	$('form').on('submit',function(){ 
+	$('input.btn').on('click',function(e){ 
 	  
+		if($('#wf-form-webinar-signup')[0].checkValidity()){
 		dataLayer.push({
 			'event' : 'GAEvent',
-			'eventCategory' : 'webinar-signup-form',
+			'eventCategory' : 'sign-up form',
 			'eventAction' : 'submitted',
 			'eventLabel' : window.location.href,
 			'eventValue' : undefined,
@@ -39,7 +55,7 @@
 		
 		//split the first and last name and add a last name field if one exists 
 		var name = $("#Your-Name").val();
-		var lastName = getLastName(name, '');
+		var lastName = getLastName(name, 'no last name provided');
 		var firstName = getFirstName(name);
 		$('<input />').attr('type', 'hidden')
 			.attr('name', "first_name")
@@ -51,7 +67,7 @@
 			.attr('value', lastName)
 			.appendTo('form');
 			
-				//persist user details
+		//persist user details
 		Qualification.User.first_name = firstName;
 		Qualification.User.last_name = lastName;
 		Qualification.User.email = $( "input[name='Work-Email']" ).val();
@@ -94,7 +110,9 @@
 		});
 		
 		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
-
+		
+		//setTimeout(function(){window.location = window.location.protocol + "//" + window.location.hostname + window.location.pathname + "/thank-you";}, 800); 
+		}
 	});         
 	  
 	//now set values based on persisted answers if we have them
@@ -111,5 +129,5 @@
  });
 
  </script>
-<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
