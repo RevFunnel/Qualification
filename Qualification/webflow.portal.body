@@ -9,33 +9,31 @@
 		var allcomments = getCommentJson(standardResults);
 		var listd = getHtmlForListings(standardResults, allcomments);
 		
-		setTimeout( function() {
-					$('.grid .grid--center .grid--gutter').append(listd); 
-					
-					setTimeout( showSignupform, 2500);  
-					
-					//any clicks on a figure should create an ecommerce click object
-					$('figure').on('click',function(e){
+		$('.grid.grid--center.grid--gutter').append(listd); 
+		
+		//setTimeout( showSignupform, 2500);  
+		
+		//any clicks on a figure should create an ecommerce click object
+		$('figure').on('click',function(e){
 
-						pushClickToDataLayer({
-							'productId':$(this).data('productid'),
-							'name':$(this).data('name'),
-							'position':$(this).data('position'),
-							'categories':$(this).data('categories'),
-						});
-						
-						window.dataLayer.push({
-							'event' : 'GAEvent',
-							'eventCategory' : 'portal-card',
-							'eventAction' : 'interacted with',
-							'eventLabel' : $(this).data('position'),
-							'eventValue' : undefined,
-							'eventNonInteractionHit' : false
-						});
-					});
+			pushClickToDataLayer({
+				'productId':$(this).data('productid'),
+				'name':$(this).data('name'),
+				'position':$(this).data('position'),
+				'categories':$(this).data('categories'),
+			});
+			
+			window.dataLayer.push({
+				'event' : 'GAEvent',
+				'eventCategory' : 'portal-card',
+				'eventAction' : 'interacted with',
+				'eventLabel' : $(this).data('position'),
+				'eventValue' : undefined,
+				'eventNonInteractionHit' : false
+			});
+		});
 					
-				});
-		}, 4500);
+
 	}
 
     jQuery(document).ready(function($){ 
