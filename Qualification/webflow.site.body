@@ -1,5 +1,40 @@
+<script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCCi7Fu3mxm4R2rghu9BdvkWMMP3bQNTmc",
+    authDomain: "qualification-67484.firebaseapp.com",
+    databaseURL: "https://qualification-67484.firebaseio.com",
+    storageBucket: "qualification-67484.appspot.com",
+    messagingSenderId: "922554213847"
+  };
+  firebase.initializeApp(config);
+</script>
+
 <script type="text/javascript">  
-	
+
+	firebase.auth().onAuthStateChanged(function(user) {
+	  if (user) {
+		// User is signed in.
+		Qualification.User = Qualification.DB.ref('users/' + user.uid).set({
+			'visitorId':user.uid,
+			'session_url': window.location.href,
+			'session_referrer': document.referrer
+		});
+		
+		$('<input />').attr('type', 'hidden')
+			.attr('name', "user_id")
+			.attr('value', Qualification.User.visitorId)
+			.appendTo('form');
+		
+	  } else {
+		// User is signed out.
+		// ...
+	  }
+	  // ...
+	});
+			
+
     $(document).ready(function($){ 
 	
 		Qualification = new QualificationApp();
@@ -10,12 +45,12 @@
 
 		//date formats for handlebar scripts
 		var DateFormats = {
-				short: "DD MMMM - YYYY",
-				long: "dddd DD.MM.YYYY HH:mm",
-				year: "YYYY",
-				month: "MMMM",
-				monthYear: "MMM YYYY"
-			};
+			short: "DD MMMM - YYYY",
+			long: "dddd DD.MM.YYYY HH:mm",
+			year: "YYYY",
+			month: "MMMM",
+			monthYear: "MMM YYYY"
+		};
 			
 		// register helper to handle date formats in handlebar templates
 		Handlebars.registerHelper("formatDate", function(datetime, format) {
@@ -129,21 +164,20 @@
 			}
 		
 		}else {
-			//no, so assign a visitorId
-			var uniqueId = GenerateId();	
-			
-			Qualification.User = {
-				'visitorId':uniqueId,
-				'session_url': window.location.href,
-				'session_referrer': document.referrer
-			};
-			Qualification.DB.setItem('qualification.user', JSON.stringify(Qualification.User));
+			//no, so sign in anonymously
+			firebase.auth().signInAnonymously().catch(function(error) {
+				// Handle Errors here.
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				alert(errorMessage);
+			});
 			
 			Qualification.Visit = {
 				'session_url': window.location.href,
 				'session_referrer': document.referrer
 			}
 			Qualification.Session.setItem('qualification.visit', JSON.stringify(Qualification.Visit));
+
 		}
 
 		//add all query params to any forms on the page
@@ -175,10 +209,6 @@
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "ip")
 				.attr('value', data.query)
-				.appendTo('form');
-			$('<input />').attr('type', 'hidden')
-				.attr('name', "user_id")
-				.attr('value', Qualification.User.visitorId)
 				.appendTo('form');
 			$('<input />').attr('type', 'hidden')
 				.attr('name', "page_url")

@@ -1,86 +1,97 @@
 <script id="listing-template" type="text/x-handlebars-template">
-		<div class="col--result-item col-3 grid--gutter">
-			<article class="result_item" data-name="{{name}}" data-productId="{{productId}}" data-position="{{index}}" data-categories="{{categoriesAsAPath}}">
-				<a class="result_img-wrapper w-inline-block" href="#">
-					<div class="result_sale-thumb">
-						<div class="result_sale-thumb_text">
-							<strong>SAVE<br>up to $455</strong>
-							</div>
+	<div class="col--result-item col-3 grid--gutter" data-name="{{name}}" data-productId="{{productId}}" data-position="{{index}}" data-categories="{{categoriesAsAPath}}">
+	<article class="result_item">
+	<a class="result_img-wrapper w-inline-block" href="#">
+	{{#if metadata.maxSavings}}
+	<div class="result_sale-thumb">
+	<div class="result_sale-thumb_text">
+		<strong>SAVE<br>up to ${{metadata.maxSavings}}</strong>
+		</div>
+	</div>
+	{{/if}}
+	<div class="center result_img-overlay">
+		<div class="result_icon">
+			<div> 10</div>
+		</div>
+	</div>
+	<img class="result_img" sizes="(max-width: 479px) 100vw, (max-width: 767px) 456.125px, (max-width: 991px) 453.59375px, 470.140625px" src="{{image}}" srcset={{image}}?width=500&crop=auto 500w, {{image}}?width=800&crop=auto 800w, {{image}}?width=1080&crop=auto 1080w, {{image}}?width=1600&crop=auto 1600w, {{image}}?width=2000&crop=auto 2000w">
+	</a>
+	<header class="result_header">
+		<div class="result_breackdown">
+			{{#if metadata.doubleBedroomCount}}
+			<div class="result_breakdown_item v--2">
+				<div>{{metadata.doubleBedroomCount}} doubles</div>
+			</div>
+			{{/if}}
+			{{#if metadata.singleBedroomCount}}
+			<div class="result_breakdown_item v--2">
+				<div>{{metadata.singleBedroomCount}} singles</div>
+			</div>
+			{{/if}}
+			{{#if metadata.bathroomCount}}
+			<div class="result_breakdown_item v--2">
+				<div>{{metadata.bathroomCount}} baths</div>
+			</div>
+			{{/if}}
+			{{#if metadata.maxPrice}}
+			<div class="result_breakdown_item v--2">
+				<div>${{metadata.maxPrice}}/wk</div>
+			</div>
+			{{/if}}
+		</div><a class="result_headline w-clearfix w-inline-block" href="/portal-detail">
+			<h2 class="result_headline-txt">recommendation {{index}}</h2>
+			<div class="result_headline-icon"></div>
+		</a>
+	</header>
+	<div class="result_description">
+		<a class="result_description-subtitle w-inline-block" href="/portal-detail">
+			<div>{{name}}</div>
+		</a>
+		<div class="result_location-breakdown">
+				<div class="location-breakdown_item v--2">{{subhead}}</div>
+		</div>
+		<div class="review_stars">
+			<div class="comment_star--gray review_star"></div>
+			<div class="comment_star--gray review_star"></div>
+			<div class="comment_star--gray review_star"></div>
+			<div class="comment_star--gray review_star"></div>
+			<div class="comment_star--gray review_star"></div>
+		</div>
+	</div>
+	{{#if metadata.maxSavings}}
+	<a class="result_sale-wrapper w-inline-block" href="/portal-detail">
+		<div>Offer: SAVE up to ${{metadata.maxSavings}} before 11/31</div>
+	</a>
+	{{/if}}
+	<div class="result_footer">
+		{{#each comments}}
+			<aside class="comment" data-ix="comment-animation" style="transform: translateX(0px) translateY(0px) translateZ(0px); transition: transform 1200ms linear;">
+			<div class="comment_staff-photo">
+				<img src="https://daks2k3a4ib2z.cloudfront.net/57ffc4716422e951589f8d3b/57ffc4716422e951589f8d7a_57d1dd731961d9ed051e490e_Mary-Kate%255B1%255D.png" width="87">
+				</div>
+				<div class="comment-text">
+					<a class="comment_name" href="#">Mary from&nbsp;RentVillas</a><p class="comment_text">This is one of our most popular villas because the owners are&nbsp;</p>
+				</div>
+			</aside>
+		{{/each}}		
+			<div class="result_action">
+				<div class="result_action-remove">
+					<div class="approval-remove_label">
+						<span class="fonta"></span> Remove</div>
+				</div>
+				<div class="result_action-like">
+					<div class="approval_like-fieild w-checkbox">
+						<input class="approval_like-check w-checkbox-input" id="field-1" type="checkbox">
+							<label class="approval_like-label w-form-label" for="field-1">
+								<span class="approval_like-heart"></span>
+								<span class="approval_like-text">Add to Favorites</span>
+							</label>
 						</div>
-						<div class="result_img-overlay">
-							<div class="result_icon">
-								<div> 10</div>
-							</div>
-						</div>
-					</a>
-					<header class="result_header">
-						<div class="result_breackdown">
-							<div class="result_breakdown_item v--2">
-								<div>9 doubles</div>
-							</div>
-							<div class="result_breakdown_item v--2">
-								<div>2 singles</div>
-							</div>
-							<div class="result_breakdown_item v--2">
-								<div>11 baths</div>
-							</div>
-							<div class="result_breakdown_item v--2">
-								<div>$5000/wk</div>
-							</div>
-						</div><a class="result_headline w-clearfix w-inline-block" href="/portal-detail">
-							<h2 class="result_headline-txt">Recommendation {{index}}</h2>
-							<div class="result_headline-icon"></div>
-						</a>
-					</header>
-					<div class="result_description">
-						<a class="result_description-subtitle w-inline-block" href="/portal-detail">
-							<div>{{name}}</div>
-						</a>
-						<div class="result_location-breakdown">
-						    {{#each categories}}
-							<div class="location-breakdown_item v--2">{{this}},</div>
-							{{/each}}
-						</div>
-						<div class="review_stars">
-							<div class="comment_star--gray review_star"></div>
-							<div class="comment_star--gray review_star"></div>
-							<div class="comment_star--gray review_star"></div>
-							<div class="comment_star--gray review_star"></div>
-							<div class="comment_star--gray review_star"></div>
-						</div>
-					</div><a class="result_sale-wrapper w-inline-block" href="/portal-detail">
-						<div>Offer: SAVE $455/wk before 11/31</div>
-					</a>
-					<div class="result_footer">
-						{{#each comments}}
-							<aside class="comment" data-ix="comment-animation" style="transform: translateX(0px) translateY(0px) translateZ(0px); transition: transform 1200ms linear;">
-								<div class="comment_staff-photo">
-									<img src="https://daks2k3a4ib2z.cloudfront.net/57ffc4716422e951589f8d3b/57ffc4716422e951589f8d7a_57d1dd731961d9ed051e490e_Mary-Kate%255B1%255D.png" width="87">
-								</div>
-								<div class="comment-text">
-									<a class="comment_name" onclick="Intercom('showNewMessage') href="#">{{commenterName}} from RentVillas</a><p class="comment_text">{{commentText}}</p>
-								</div>
-							</aside>
-						{{/each}}
-							<div class="result_action">
-								<div class="result_action-remove">
-									<div class="approval-remove_label">
-										<span class="fonta"></span> Remove</div>
-								</div>
-								<div class="result_action-like">
-									<div class="approval_like-fieild w-checkbox">
-										<input class="approval_like-check w-checkbox-input" id="field-1" type="checkbox">
-											<label class="approval_like-label w-form-label" for="field-1">
-												<span class="approval_like-heart"></span>
-												<span class="approval_like-text">Add to Favorites</span>
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-						</article>
 					</div>
-
+				</div>
+			</div>
+		</article>
+	</div>
 				</script>
 				<script id="title-template" type="text/x-handlebars-template">
   Your 

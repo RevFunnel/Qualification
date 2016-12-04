@@ -32,11 +32,9 @@
 		
 		Qualification.DB.setItem('qualification.answers', JSON.stringify(Qualification.Answers))
 		
-		var qstr = answersToQueryString(Qualification.Answers) + '&segId='+Qualification.Segment.referenceCode+ '&title='+Qualification.Segment.title;		
-		$( "#wf-form-Start_Single_Page_Form-2" ).attr("data-redirect", qstr);
 		$('.single-page-form-submit').trigger('click'); 
 		
-		setTimeout(function(){window.location.href = '/portal?' + qstr;}, 500); 
+		setTimeout(function(){window.location.href = '/portal?user=' + Qualification.User.visitorId;}, 500); 
 	}
 
     jQuery(document).ready(function($){
@@ -54,7 +52,7 @@
 		});
       
 		//form submission
-		$('#wf-form-Start_Single_Page_Form-2 > a').on('click',function(){ 
+		$('#wf-form-Start_Single_Page_Form-2').find('a').on('click',function(){ 
 		  //if($('#wf-form-Start_Single_Page_Form-2').valid()){
 			   submitSinglePageForm(); 
 		  //}                   
