@@ -280,7 +280,7 @@ function QualificationApp(){
 		   Qualification.UrlParams[decode(match[1])] = decode(match[2]);
 	})();
 	
-		//polyfill json support used in parsing to and from storage
+	//polyfill json support used in parsing to and from storage
 	if(!(window.JSON && window.JSON.parse))
 	{
 		(function() {
@@ -393,18 +393,7 @@ function answersToQueryString(answers)
 }
 
 function SetupStorage(){
-	Qualification.DB;
-	try {
-		var x = 'test_localstorage_available_' + Date.now();
-		localStorage.setItem(x, x);
-		var y = localStorage.getItem(x);
-		localStorage.removeItem(x);
-		if (x !== y) {throw new Error();}
-		Qualification.DB = localStorage;
-	}
-	catch(e) {
-		Qualification.DB = new MemoryStorage('qualification');
-	}
+	Qualification.DB = firebase.database();
 }
 
 function getParam(name) {
