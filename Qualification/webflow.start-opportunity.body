@@ -1,5 +1,16 @@
 <script>
 jQuery(document).ready(function($){ 
+	//track form interaction
+	$('#wf-form-opportunity-form').on('click',function(e){
+		dataLayer.push({
+			'event' : 'GAEvent',
+			'eventCategory' : 'opportunity-form',
+			'eventAction' : 'interacted with',
+			'eventLabel' : window.location.href,
+			'eventValue' : undefined,
+			'eventNonInteractionHit' : false
+		});
+	});
 	
 	//default the email address based on the user
 	if ("User" in Qualification){
@@ -35,6 +46,16 @@ jQuery(document).ready(function($){
 			var $el = $('.nav.opp-button');
 			var trigger = {"type":"click","selector":".opp-modal-wrapper","stepsA":[{"display":"block","opacity":1,"transition":"transform 1000ms ease 0, opacity 1000ms ease 0","scaleX":1,"scaleY":1,"scaleZ":1}],"stepsB":[]};
 			ix.run(trigger, $el);
+			
+			//raise event that form is viewed
+			dataLayer.push({
+				'event' : 'GAEvent',
+				'eventCategory' : 'opportunity-form',
+				'eventAction' : 'viewed',
+				'eventLabel' : window.location.href,
+				'eventValue' : undefined,
+				'eventNonInteractionHit' : false
+			});
 						
 			e.preventDefault();
 		  }
@@ -60,6 +81,15 @@ jQuery(document).ready(function($){
 				.attr('name', "last_name")
 				.attr('value', lastName)
 				.appendTo('form');
+				
+			dataLayer.push({
+				'event' : 'GAEvent',
+				'eventCategory' : 'opportunity-form',
+				'eventAction' : 'submitted',
+				'eventLabel' : window.location.href,
+				'eventValue' : undefined,
+				'eventNonInteractionHit' : false
+			});
 
 		}
 	});
