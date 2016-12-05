@@ -392,7 +392,20 @@ function answersToQueryString(answers)
 }
 
 function SetupStorage(){
-	Qualification.DB = firebase.database();
+	Qualification.DB;
+	try {
+		var x = 'test_localstorage_available_' + Date.now();
+		localStorage.setItem(x, x);
+		var y = localStorage.getItem(x);
+		localStorage.removeItem(x);
+		if (x !== y) {throw new Error();}
+		Qualification.DB = localStorage;
+	}
+	catch(e) {
+		Qualification.DB = new MemoryStorage('qualification');
+	}
+	
+	Qualification.Firebase = firebase.database();
 }
 
 function getParam(name) {
