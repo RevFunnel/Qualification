@@ -1,3 +1,4 @@
+
 function GenerateId() {
 	var ALPHABET = '23456789abdegjkmnpqrvwxyz';
 	var ID_LENGTH = 8;
@@ -230,8 +231,8 @@ function getLastName(str, ifNone) {
 
 function concatValues(param,value,type){
 	var outp = ''; 
-	if(getParam(param)){
-	  var parval = getParam(param);
+	if(getValueFromUrlQuery(param)){
+	  var parval = getValueFromUrlQuery(param);
 	  if((type == 'int' && parseInt(parval)> 0) || (type == 'string' && $.trim(parval) !='')){
 		  outp += value;
 	  }			  
@@ -267,6 +268,7 @@ function QualificationApp(){
 	
 	Qualification = this;
 	
+	//setup array of all url parameters
 	(window.onpopstate = function () {
 		var match,
 			pl     = /@@@/g,  // Regex for replacing addition symbol with a space, you could replace @@@ with a + to remove those from values
@@ -291,20 +293,9 @@ function QualificationApp(){
 		})();
 	}	
 	
-	//override webflows resize function
-	var Webflow = Webflow || [];
-	Webflow.push(function () {
-		
-		Webflow.resize.on(function () {   
-			if($('#recommend-list').length > 0){
-			 gridifyColumn($('#recommend-list'));
-			}
-		});
-	});  
-	
 	SetupStorage();
 	
-	//Load question data
+	//Load question data for single-page-form, this should be implemented in code specific to the page
 	Qualification.Questions = {};
 	
 	Qualification.Questions["who_is_travelling"] = [
@@ -381,6 +372,7 @@ function QualificationApp(){
 
 }
 
+// Takes key value pairs (question key and the answers) and contructs a query string
 function answersToQueryString(answers)
 {
 	 var kvpairs = [];
@@ -391,6 +383,7 @@ function answersToQueryString(answers)
 	 return kvpairs.join("&");
 }
 
+// Sets up storage for use in the app.  Default is localstorage, but uses memory storage as a backup
 function SetupStorage(){
 	Qualification.DB;
 	try {
@@ -408,7 +401,8 @@ function SetupStorage(){
 	Qualification.Firebase = firebase.database();
 }
 
-function getParam(name) {
+// Gets the value for a url parameters
+function getValueFromUrlQuery(name) {
 	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 	results = regex.exec(location.search);
