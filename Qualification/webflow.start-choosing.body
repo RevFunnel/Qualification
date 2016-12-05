@@ -9,7 +9,7 @@
 			$(this).addClass('active').siblings().removeClass('active');
 			
 			var target = $(this).data("href");
-			if (target === undefined) target = "result"; //is undefined for the last question on the page
+			if (target === undefined) target = "#result"; //is undefined for the last question on the page
 			
 			$target = $(target);
 			$('html, body').stop().animate({

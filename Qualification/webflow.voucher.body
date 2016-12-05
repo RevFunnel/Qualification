@@ -3,8 +3,8 @@
 	jQuery(document).ready(function($){ 
  
 		//get email from url and save to a cookie
-		Cookies.set('rve', getParam('e'), { expires: 7, domain: 'rentvillas.com' });
-		Cookies.set('rvlid', getParam('lid'), { expires: 7, domain: 'rentvillas.com' });
+		Cookies.set('rve', getValueFromUrlQuery('e'), { expires: 7, domain: 'rentvillas.com' });
+		Cookies.set('rvlid', getValueFromUrlQuery('lid'), { expires: 7, domain: 'rentvillas.com' });
  
 		populate_select('what_is_your_max_weekly_budget', 'All');   
 		populate_select('how_many_people_are_traveling', 'All');

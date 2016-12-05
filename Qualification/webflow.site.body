@@ -75,8 +75,8 @@
 		if ("Segment" in window) Qualification.Segment = window.Segment;
 		
 		//if we don't have a segment defined, but we have one in the url then setup the segment
-		if ((!('Segment' in Qualification)) && getParam('segId') && 'Segments' in Qualification){
-			Qualification.Segment = Qualification.Segments[getParam('segId')];
+		if ((!('Segment' in Qualification)) && getValueFromUrlQuery('segId') && 'Segments' in Qualification){
+			Qualification.Segment = Qualification.Segments[getValueFromUrlQuery('segId')];
 		}
 		
 		//now persist our segment if we have set it up, or look to local storage for one if we still don't have one
@@ -91,7 +91,7 @@
 		if ('Segment' in Qualification && Qualification.Segment !== null) 
 		{		
 			//setup the title for the segment based on url parameters that override the segment name for on-page dynamic replacement
-			Qualification.Segment.title = (getParam('area') || getParam('title')) ? getParam('area') || getParam('title') : Qualification.Segment.name;
+			Qualification.Segment.title = (getValueFromUrlQuery('area') || getValueFromUrlQuery('title')) ? getValueFromUrlQuery('area') || getValueFromUrlQuery('title') : Qualification.Segment.name;
 			$(".main-heading-span > span").html(Qualification.Segment.title);
 			
 			//log our segment with GA 	
