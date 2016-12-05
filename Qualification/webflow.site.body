@@ -16,7 +16,7 @@
 	firebase.auth().onAuthStateChanged(function(user) {
 	  if (user) {
 		// User is signed in.
-		Qualification.User = Qualification.DB.ref('users/' + user.uid).set({
+		Qualification.User = Qualification.Firebase.ref('users/' + user.uid).set({
 			'visitorId':user.uid,
 			'session_url': window.location.href,
 			'session_referrer': document.referrer
@@ -82,6 +82,7 @@
 		//now persist our segment if we have set it up, or look to local storage for one if we still don't have one
 		if ('Segment' in Qualification){
 			Qualification.DB.setItem('qualification.segment', JSON.stringify(Qualification.Segment))
+			Qualification.Firebase.ref('segment/' + user.uid).set(Qualification.Segment);
 		}
 		else {
 			Qualification.Segment = window.JSON.parse(Qualification.DB.getItem('qualification.segment'));
