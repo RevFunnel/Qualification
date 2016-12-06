@@ -334,7 +334,14 @@ function QualificationApp(){
 		
 	  } else {
 		// User is signed out.
-		// ...
+		
+		//sign in all users anonymously
+		firebase.auth().signInAnonymously().catch(function(error) {
+			// Handle Errors here.
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			alert(errorMessage);
+		});
 	  }
 	  // ...
 	});
