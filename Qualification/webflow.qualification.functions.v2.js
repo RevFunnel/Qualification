@@ -301,8 +301,9 @@ function QualificationApp(){
 		//get any user data that we may already have
 		Qualification.Firebase.ref('users/' + user.uid).once('value').then(function(snapshot){
 			
-			//set the user to the user from the database
+			//try to get the user from the database
 			if (snapshot.val()){
+				//we have the user
 				Qualification.User = snapshot.val();
 				
 				//boot intercom for user if we have email
@@ -317,6 +318,7 @@ function QualificationApp(){
 				//we don't have a user yet in firebase so add them
 				Qualification.User = {
 					'visitorId':user.uid,
+					'created_at' : moment().toISOString(),
 					'session_url': window.location.href,
 					'session_referrer': document.referrer
 				};
