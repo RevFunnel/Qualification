@@ -295,6 +295,50 @@ function QualificationApp(){
 	
 	SetupStorage();
 	
+	//setup callback for firebase authorization
+	firebase.auth().onAuthStateChanged(function(user) {
+	  if (user) {
+		//get any user data that we may already have
+		Qualification.Firebase.ref('users/' + user.uid).once('value').then(function(snapshot){
+			
+			//set the user to the user from the database
+			if (snapshot.val()){
+				Qualification.User = snapshot.val();
+				
+				//boot intercom for user if we have email
+				if ("email" in Qualification.User){
+					window.Intercom("boot", {
+						app_id: window.intercomAppId,
+						email: Qualification.User.email
+					});
+				}
+				
+			} else {
+				//we don't have a user yet in firebase so add them
+				Qualification.User = {
+					'visitorId':user.uid,
+					'session_url': window.location.href,
+					'session_referrer': document.referrer
+				};
+				Qualification.Firebase.ref('users/' + user.uid).set(Qualification.User);			
+			}
+
+			//add user_id to forms
+			$('<input />').attr('type', 'hidden')
+				.attr('name', "user_id")
+				.attr('value', user.uid)
+				.appendTo('form');
+		});
+		
+	  } else {
+		// User is signed out.
+		// ...
+	  }
+	  // ...
+	});
+	
+
+	
 	//Load question data for single-page-form, this should be implemented in code specific to the page
 	Qualification.Questions = {};
 	
